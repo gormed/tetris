@@ -1,4 +1,7 @@
-import core.Application;
+package core;
+
+import objects.Square;
+import framework.core.Application;
 
 
 public class TetrisGame {
@@ -15,6 +18,6 @@ public class TetrisGame {
 	}
 	
 	public static void loadContent() {
-		
+		Square s = new Square();
 	}
 }
