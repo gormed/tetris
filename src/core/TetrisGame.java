@@ -53,14 +53,14 @@ public class TetrisGame {
 	 * Load content.
 	 */
 	public static void loadContent() {
-		Square s = new Square();
-		objects.Long l = new objects.Long();
-		l.setPosition(3, 0);
-		
-		stepper.addGameObject(s);
-		stepper.addGameObject(l);
-		
-		stepper.setCurrentBlock(l);
+//		Square s = new Square();
+//		objects.Long l = new objects.Long();
+//		l.setPosition(3, 0);
+//		
+//		stepper.addGameObject(s);
+//		stepper.addGameObject(l);
+//		
+		stepper.start();
 		
 	}
 }

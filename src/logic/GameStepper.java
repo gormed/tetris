@@ -14,7 +14,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 17.01.2012 - 20:03:32 by Hans
+ * Documentation created: 17.01.2012 - 21:55:05 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -26,13 +26,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 import objects.BaseObject;
+import objects.BlockType;
 
 import framework.core.Application;
 import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
 import framework.events.TimedControl;
+import framework.objects.Square;
 
 /**
  * The Class GameStepper.
@@ -42,14 +45,21 @@ public class GameStepper implements TimedControl {
 	/** The instance. */
 	private static GameStepper instance;
 	
+	/** The block stepper. */
 	private static CurrentBlockStepper blockStepper;
 
+	/** The period. */
 	private long period = 800;
 
+	/** The game objects. */
 	private ArrayList<BaseObject> gameObjects;
 
+	/** The current main block. */
 	private BaseObject currentMainBlock;
-
+	
+	/** The next main block. */
+	private BaseObject nextMainBlock;
+	
 	/**
 	 * Gets the single instance of GameStepper.
 	 * 
@@ -70,9 +80,44 @@ public class GameStepper implements TimedControl {
 		gameObjects = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 	}
+	
+	/**
+	 * Start.
+	 */
+	public void start() {
+		generateNextBlock();
+		setCurrentBlock(nextMainBlock);
+		generateNextBlock();
+	}
 
-	public void setCurrentBlock(BaseObject block) {
+	/**
+	 * Sets the current block.
+	 *
+	 * @param block the new current block
+	 */
+	private void setCurrentBlock(BaseObject block) {
 		currentMainBlock = block;
+	}
+	
+	/**
+	 * Generate next block.
+	 */
+	private void generateNextBlock() {
+		Random r = new Random(System.currentTimeMillis());
+		int random = Math.abs(r.nextInt()) % 2; // TODO: Change 2 into 7, this is the number of block-types
+		switch (random) {
+		case 0:
+			nextMainBlock = new objects.Square();
+			break;
+		case 1:
+			nextMainBlock = new objects.Long();
+			break;
+
+		default:
+			nextMainBlock = new objects.Square();
+			break;
+		}
+		nextMainBlock.setPosition(5, 0);
 	}
 
 	/**
@@ -108,6 +153,10 @@ public class GameStepper implements TimedControl {
 
 		if (p.y < 26)
 			currentMainBlock.setPosition(p.x, p.y + 1);
+		else {
+			setCurrentBlock(nextMainBlock);
+			generateNextBlock();
+		}
 
 	}
 
@@ -143,8 +192,12 @@ public class GameStepper implements TimedControl {
 	 */
 	class CurrentBlockStepper implements TimedControl, KeyboardControl {
 		
+		/** The key events. */
 		private Queue<KeyEvent> keyEvents;
 
+		/**
+		 * Instantiates a new current block stepper.
+		 */
 		public CurrentBlockStepper() {
 			Application.getInstance().addTimedObject(this);
 			Application.getInstance().addKeyboardControl(this);
@@ -262,12 +315,17 @@ public class GameStepper implements TimedControl {
 			};
 		}
 		
+		/* (non-Javadoc)
+		 * @see framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
+		 */
 		@Override
 		public void keyPressed(KeyEvent event) {
 
-			
 		}
 
+		/* (non-Javadoc)
+		 * @see framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
+		 */
 		@Override
 		public void keyReleased(KeyEvent event) {
 			Point p = currentMainBlock.getPosition();
@@ -281,15 +339,21 @@ public class GameStepper implements TimedControl {
 			}
 			// arrow down is pressed
 			else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-				if (p.y > 26) keyEvents.add(event);
+				if (p.y < 26) keyEvents.add(event);
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
+		 */
 		@Override
 		public void keyTyped(KeyEvent event) {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see framework.events.TimedControl#onTimedEvent(framework.core.TimedEvent)
+		 */
 		@Override
 		public void onTimedEvent(TimedEvent t) {
 			if (!keyEvents.isEmpty()) {
@@ -305,11 +369,14 @@ public class GameStepper implements TimedControl {
 				}
 				// arrow down is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (p.y > 26) currentMainBlock.setPosition(p.x, p.y + 1);
+					if (p.y < 26) currentMainBlock.setPosition(p.x, p.y + 1);
 				}
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see framework.events.TimedControl#getPeriod()
+		 */
 		@Override
 		public long getPeriod() {
 			return 200;
