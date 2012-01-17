@@ -11,30 +11,32 @@
  * Email us: hans.ferchland@gmx.de
  * 
  * Project: Tetris
- * File: Square.java
- * Type: objects.Square
+ * File: Long.java
+ * Type: objects.Long
  * 
  * Documentation created: 17.01.2012 - 19:29:35 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import framework.core.Time;
 
 /**
- * The Class Square.
+ * The Class Long.
  */
-public class Square extends BaseObject {
+public class Long extends BaseObject {
 
 	/**
-	 * Instantiates a new square.
+	 * Instantiates a new long.
 	 */
-	public Square() {
+	public Long() {
 		super();
-		blockType = BlockType.Square;
+		blockType = BlockType.Long;
 		createRaster();
+		changeColor(Color.red, Color.orange);
 	}
 
 	/* (non-Javadoc)
@@ -42,10 +44,10 @@ public class Square extends BaseObject {
 	 */
 	@Override
 	protected void createRaster() {
+		raster[0][0] = true;
+		raster[0][1] = true;
 		raster[0][2] = true;
-		raster[1][2] = true;
 		raster[0][3] = true;
-		raster[1][3] = true;
 			
 		createBlocks();
 	}
