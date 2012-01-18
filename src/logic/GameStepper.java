@@ -32,13 +32,10 @@ import java.util.Queue;
 import java.util.Random;
 
 import objects.BaseObject;
-import objects.BlockType;
-
 import framework.core.Application;
 import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
 import framework.events.TimedControl;
-import framework.objects.Square;
 
 /**
  * The Class GameStepper.
@@ -175,6 +172,22 @@ public class GameStepper implements TimedControl {
 			currentMainBlock.setPosition(desired.x, desired.y);
 		}
 	}
+	
+	/**
+	 * Check main block collision by rotate.
+	 *
+	 * @param desired the desired
+	 */
+	private void checkMainBlockCollisionRotate(Point desired) {
+		int checkValue = currentMainBlock.checkCollision(collision, desired);
+		if (checkValue == 1 || checkValue == 2) {
+
+		} else {
+			currentMainBlock.rotate();
+			
+		}
+	}
+			
 	
 	/**
 	 * Check main block collision horizontal.
@@ -371,6 +384,10 @@ public class GameStepper implements TimedControl {
 			else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
 				keyEvents.add(event);
 			}
+			// arrow up is pressed
+			else if (event.getKeyCode() == KeyEvent.VK_UP) {
+				keyEvents.add(event);
+			}
 		}
 
 		/* (non-Javadoc)
@@ -401,9 +418,13 @@ public class GameStepper implements TimedControl {
 				else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 					checkMainBlockCollisionDown(new Point(p.x, p.y+1));
 				}
+				// arrow up is pressed
+				else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					checkMainBlockCollisionRotate(new Point(p.x, p.y));
+				}
 			}
 		}
-
+		
 		/* (non-Javadoc)
 		 * @see framework.events.TimedControl#getPeriod()
 		 */

@@ -26,8 +26,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import logic.FieldCollision;
 
+import logic.FieldCollision;
 import framework.core.Time;
 import framework.core.UpdateObject;
 import framework.objects.CanvasObject;
@@ -39,7 +39,7 @@ import framework.objects.Square;
 abstract public class BaseObject extends UpdateObject {
 
 	/** The raster. */
-	protected boolean[][] raster;
+	protected boolean[][] raster, tempRaster;
 
 	/** The blocks. */
 	protected FramedRect[][] blocks;
@@ -49,13 +49,23 @@ abstract public class BaseObject extends UpdateObject {
 	
 	/** The position. */
 	protected Point position;
+	
+	/** The direction for rotation 
+	 * 0 : down
+	 * 1 : left
+	 * 2 : up
+	 * 3 : right
+	 */
+	protected int direction;
 
 	/**
 	 * Instantiates a new base object.
 	 */
 	protected BaseObject() {
 		super();
+		direction = 0;
 		raster = new boolean[4][4];
+		tempRaster = new boolean[4][4];
 		blocks = new FramedRect[4][4];
 		position = new Point();
 	}
@@ -64,7 +74,7 @@ abstract public class BaseObject extends UpdateObject {
 	 * Creates the raster.
 	 */
 	protected abstract void createRaster();
-
+	protected abstract void createTempRaster();
 	/**
 	 * Gets the block type.
 	 * 
@@ -73,7 +83,39 @@ abstract public class BaseObject extends UpdateObject {
 	public BlockType getBlockType() {
 		return blockType;
 	}
-
+	
+	protected FramedRect[] getBlocks()
+	{
+		FramedRect[] tempBlocks = new FramedRect[4];
+		int n = 0;
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (raster[i][j] == true) {
+					tempBlocks[n] = blocks[i][j];
+					n++;
+				}
+			}
+		}
+		return tempBlocks;
+	
+	}
+	
+	protected void recreateBlocks(FramedRect [] paraBlocks)
+	{
+		int n = 0;
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (raster[i][j] == true) {
+					blocks[i][j] = paraBlocks[n];
+					blocks[i][j].setArrayCoord(i,j);
+					blocks[i][j].setPosition(position.x * 20, position.y * 20);
+					n++;
+				}
+			}
+		}
+		
+	}
+	
 	/**
 	 * Creates the blocks.
 	 */
@@ -148,11 +190,14 @@ abstract public class BaseObject extends UpdateObject {
 	/**
 	 * Rotates the block.
 	 *
-	 * @param dir the direction to rotate (left = -1, right = 1)
-	 * @param value the times to rotate. 1 times means 90 degree, 2 = 180 degree, and so on
 	 */
-	public abstract void rotate(int dir, int value);
-	
+	public void rotate() {
+		FramedRect[] tempBlocks = getBlocks();
+		createTempRaster();
+		raster = tempRaster;
+		recreateBlocks(tempBlocks);
+		direction = (direction + 1)%4;
+	}
 	/**
 	 * Checks the blocks collision.
 	 *
@@ -161,6 +206,18 @@ abstract public class BaseObject extends UpdateObject {
 	 */
 	public int checkCollision(FieldCollision collision, Point position) {
 		return collision.checkCollision(raster, position);
+
+	}
+	
+	/**
+	 * Checks the blocks collision by rotate.
+	 *
+	 * @param collision the collision
+	 * @return true, if colliding
+	 */
+	public int checkCollisionRotate(FieldCollision collision, Point position) {
+		createTempRaster();
+		return collision.checkCollision(tempRaster, position);
 
 	}
 	
@@ -235,6 +292,12 @@ abstract public class BaseObject extends UpdateObject {
 				inner.draw();
 			}
 		}
+		
+		public void setArrayCoord(int x, int y)
+		{
+			arrayX = x;
+			arrayY = y;
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -280,4 +343,10 @@ abstract public class BaseObject extends UpdateObject {
 		}
 
 	}
+
+	 
+		
+		
+	
+
 }

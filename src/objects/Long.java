@@ -79,12 +79,38 @@ public class Long extends BaseObject {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see objects.BaseObject#rotate(int, int)
-	 */
+
+
+	
+
 	@Override
-	public void rotate(int dir, int value) {
-		// TODO Auto-generated method stub
+	protected void createTempRaster() {
+		switch(direction){
+		case 0: 
+		case 2:
+			{tempRaster[1][0] = false;
+			tempRaster[1][1] = false;
+			tempRaster[1][2] = false;
+			tempRaster[1][3] = false;
+			tempRaster[0][1] = true;
+			tempRaster[1][1] = true;
+			tempRaster[2][1] = true;
+			tempRaster[3][1] = true;
+			break;
+			}
+		case 1:
+		case 3:
+			tempRaster[0][1] = false;
+			tempRaster[1][1] = false;
+			tempRaster[2][1] = false;
+			tempRaster[3][1] = false;
+			tempRaster[1][0] = true;
+			tempRaster[1][1] = true;
+			tempRaster[1][2] = true;
+			tempRaster[1][3] = true;
+			break;
+		}
+		
 		
 	}
 

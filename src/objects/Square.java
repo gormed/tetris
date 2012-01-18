@@ -1,3 +1,4 @@
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
@@ -20,15 +21,20 @@
  * Documentation created: 18.01.2012 - 01:19:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 package objects;
 
 import java.awt.event.MouseEvent;
 
+
 import framework.core.Time;
+
+
 
 /**
  * The Class Square.
  */
+
 public class Square extends BaseObject {
 
 	/**
@@ -76,13 +82,12 @@ public class Square extends BaseObject {
 	public void onRelease(MouseEvent event) {
 
 	}
-
-	/* (non-Javadoc)
-	 * @see objects.BaseObject#rotate(int, int)
-	 */
+	
 	@Override
-	public void rotate(int dir, int value) {
-		// TODO Auto-generated method stub
+	protected void createTempRaster() {
+		tempRaster = raster;
+				
+		
 		
 	}
 
