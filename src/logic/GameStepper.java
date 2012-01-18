@@ -108,7 +108,7 @@ public class GameStepper implements TimedControl {
 	 */
 	private void generateNextBlock() {
 		Random r = new Random(System.currentTimeMillis());
-		int random = Math.abs(r.nextInt()) % 2; // TODO: Change 2 into 7, this is the number of block-types
+		int random = Math.abs(r.nextInt()) % 7; // TODO: Change 2 into 7, this is the number of block-types
 		switch (random) {
 		case 0:
 			nextMainBlock = new objects.Square();
@@ -116,7 +116,21 @@ public class GameStepper implements TimedControl {
 		case 1:
 			nextMainBlock = new objects.Long();
 			break;
-
+		case 2:
+			nextMainBlock = new objects.Pyramid();
+			break;
+		case 3:
+			nextMainBlock = new objects.StairL();
+			break;
+		case 4:
+			nextMainBlock = new objects.StairR();
+			break;
+		case 5:
+			nextMainBlock = new objects.AngleL();
+			break;
+		case 6:
+			nextMainBlock = new objects.AngleR();
+			break;
 		default:
 			nextMainBlock = new objects.Square();
 			break;
