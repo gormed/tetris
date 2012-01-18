@@ -17,7 +17,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 18.01.2012 - 14:15:36 by Hans
+ * Documentation created: 18.01.2012 - 16:22:19 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -50,6 +50,8 @@ abstract public class BaseObject extends UpdateObject {
 	/** The position. */
 	protected Point position;
 	
+	protected FramedRect[] baseBlocks;
+	
 	/** The direction for rotation 
 	 * 0 : down
 	 * 1 : left
@@ -67,6 +69,7 @@ abstract public class BaseObject extends UpdateObject {
 		raster = new boolean[4][4];
 		tempRaster = new boolean[4][4];
 		blocks = new FramedRect[4][4];
+		baseBlocks = new FramedRect[4];
 		position = new Point();
 	}
 
@@ -86,18 +89,7 @@ abstract public class BaseObject extends UpdateObject {
 	
 	protected FramedRect[] getBlocks()
 	{
-		FramedRect[] tempBlocks = new FramedRect[4];
-		int n = 0;
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				if (raster[i][j] == true) {
-					tempBlocks[n] = blocks[i][j];
-					n++;
-				}
-			}
-		}
-		return tempBlocks;
-	
+		return baseBlocks;
 	}
 	
 	protected void recreateBlocks(FramedRect [] paraBlocks)
@@ -120,14 +112,14 @@ abstract public class BaseObject extends UpdateObject {
 	 * Creates the blocks.
 	 */
 	protected void createBlocks() {
+		int n = 0;
 		for (int i = 0; i < 4; i++) {
-			
-			
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
 					blocks[i][j] = new FramedRect(i * 20, j * 20, 20, 3,
 							Color.BLUE, Color.CYAN, new Point(i, j));
 					blocks[i][j].makeVisible();
+					baseBlocks[n++] = blocks[i][j];
 				}
 			}
 		}
@@ -153,6 +145,11 @@ abstract public class BaseObject extends UpdateObject {
 		return new Point(position.x, position.y);
 	}
 	
+	/**
+	 * Gets the sub block array.
+	 *
+	 * @return the sub block array
+	 */
 	public boolean[][] getSubBlockArray() {
 		return raster.clone();
 	}
@@ -192,10 +189,8 @@ abstract public class BaseObject extends UpdateObject {
 	 *
 	 */
 	public void rotate() {
-		FramedRect[] tempBlocks = getBlocks();
-		createTempRaster();
 		raster = tempRaster;
-		recreateBlocks(tempBlocks);
+		recreateBlocks(baseBlocks);
 		direction = (direction + 1)%4;
 	}
 	/**

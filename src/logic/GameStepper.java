@@ -17,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 18.01.2012 - 16:13:43 by Hans
+ * Documentation created: 18.01.2012 - 19:34:20 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -44,25 +44,24 @@ public class GameStepper implements TimedControl {
 
 	/** The instance. */
 	private static GameStepper instance;
-	
+
 	/** The block stepper. */
 	private static CurrentBlockStepper blockStepper;
 
 	/** The period. */
-	private long period = 800;
-
-	/** The game objects. */
-	private ArrayList<BaseObject> gameObjects;
+	private long period = 400;
 
 	/** The current main block. */
 	private BaseObject currentMainBlock;
-	
+
 	/** The next main block. */
 	private BaseObject nextMainBlock;
-	
+
 	/** The collision. */
 	private FieldCollision collision;
-	
+
+	private ArrayList<BaseObject> inactiveBlocks;
+
 	/**
 	 * Gets the single instance of GameStepper.
 	 * 
@@ -80,11 +79,11 @@ public class GameStepper implements TimedControl {
 	 */
 	private GameStepper() {
 		Application.getInstance().addTimedObject(this);
-		gameObjects = new ArrayList<BaseObject>();
+		inactiveBlocks = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 		collision = FieldCollision.getInstance();
 	}
-	
+
 	/**
 	 * Start.
 	 */
@@ -92,23 +91,28 @@ public class GameStepper implements TimedControl {
 		generateNextBlock();
 		setCurrentBlock(nextMainBlock);
 		generateNextBlock();
+
 	}
 
 	/**
 	 * Sets the current block.
-	 *
-	 * @param block the new current block
+	 * 
+	 * @param block
+	 *            the new current block
 	 */
 	private void setCurrentBlock(BaseObject block) {
+		inactiveBlocks.add(currentMainBlock);
 		currentMainBlock = block;
+		GameScore.getInstance().setTimeBlockCreated(System.currentTimeMillis());
 	}
-	
+
 	/**
 	 * Generate next block.
 	 */
 	private void generateNextBlock() {
 		Random r = new Random(System.currentTimeMillis());
 		int random = Math.abs(r.nextInt()) % 7; // TODO: Change 2 into 7, this is the number of block-types
+
 		switch (random) {
 		case 0:
 			nextMainBlock = new objects.Square();
@@ -138,26 +142,6 @@ public class GameStepper implements TimedControl {
 		nextMainBlock.setPosition(5, 0);
 	}
 
-	/**
-	 * Adds a game object.
-	 * 
-	 * @param obj
-	 *            the obj
-	 */
-	public void addGameObject(BaseObject obj) {
-		gameObjects.add(obj);
-	}
-
-	/**
-	 * Removes a game object.
-	 * 
-	 * @param obj
-	 *            the obj
-	 */
-	public void removeGameObject(BaseObject obj) {
-		gameObjects.remove(obj);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -168,32 +152,59 @@ public class GameStepper implements TimedControl {
 	public void onTimedEvent(TimedEvent t) {
 
 		Point p = currentMainBlock.getPosition();
-		checkMainBlockCollisionDown(new Point(p.x, p.y + 1));
+		checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
 
 	}
-	
+
+	/**
+	 * This method is called if a block gets unmovable or inactive.
+	 */
+	private void onBlockInactive() {
+		// add current block to inactives
+		collision.addInactiveBlock(currentMainBlock);
+		// calculate score if block get inactive
+		GameScore.getInstance()
+				.setTimeBlockInactive(System.currentTimeMillis());
+		// get the next block and set that as the current one
+		setCurrentBlock(nextMainBlock);
+		// generate preview of next block
+		generateNextBlock();
+		// check if a line is filled
+		checkLines();
+	}
+
+	/**
+	 * Checks lines and sets all blocks on the new position.
+	 */
+	private void checkLines() {
+		int linesRemoved = collision.checkLines();
+		if (linesRemoved > 0)
+			removeLines(linesRemoved);
+	}
+
 	/**
 	 * Check main block collision.
-	 *
-	 * @param desired the desired
+	 * 
+	 * @param desired
+	 *            the desired
 	 */
-	private void checkMainBlockCollisionDown(Point desired) {
+	private void checkMainBlockCollisionVertical(Point desired) {
 		if (currentMainBlock.checkCollision(collision, desired) == 1) {
-			collision.addInactiveBlock(currentMainBlock);
-			setCurrentBlock(nextMainBlock);
-			generateNextBlock();
+			// a block is at the bottom or on some other brick
+			onBlockInactive();
 		} else {
+			// the block can move to the next y-pos
 			currentMainBlock.setPosition(desired.x, desired.y);
 		}
 	}
-	
+
 	/**
 	 * Check main block collision by rotate.
 	 *
 	 * @param desired the desired
 	 */
 	private void checkMainBlockCollisionRotate(Point desired) {
-		int checkValue = currentMainBlock.checkCollision(collision, desired);
+		int checkValue = currentMainBlock.checkCollisionRotate(collision, desired);
 		if (checkValue == 1 || checkValue == 2) {
 
 		} else {
@@ -205,8 +216,9 @@ public class GameStepper implements TimedControl {
 	
 	/**
 	 * Check main block collision horizontal.
-	 *
-	 * @param desired the desired
+	 * 
+	 * @param desired
+	 *            the desired
 	 */
 	private void checkMainBlockCollisionHorizontal(Point desired) {
 		int checkValue = currentMainBlock.checkCollision(collision, desired);
@@ -220,18 +232,32 @@ public class GameStepper implements TimedControl {
 	/**
 	 * Removes the lines.
 	 * 
-	 * TODO: This method needs rework! All blocks that are out of screen have to be deleted!
-	 *
-	 * @param value the value
+	 * TODO: This method needs rework! All blocks that are out of screen have to
+	 * be deleted!
+	 * 
+	 * @param value
+	 *            the value
 	 */
 	public void removeLines(int value) {
-		for (BaseObject o : gameObjects) {
 
-			Point p = o.getPosition();
-
-			if (p.y < 26)
-				o.setPosition(p.x, p.y + value);
+		ArrayList<BaseObject> remove = new ArrayList<BaseObject>();
+		for (BaseObject o : inactiveBlocks) {
+			if (o != null) {
+				Point p = o.getPosition();
+				if (p.y >= FieldCollision.GAME_HEIGHT + 4)
+					remove.add(o);
+				else
+					o.setPosition(p.x, p.y + value);
+			}
 		}
+		
+		for (BaseObject o : remove) {
+			inactiveBlocks.remove(o);
+			o.dispose();
+		}
+		
+		remove.clear();
+		remove = null;
 	}
 
 	/*
@@ -243,12 +269,12 @@ public class GameStepper implements TimedControl {
 	public long getPeriod() {
 		return period;
 	}
-	
+
 	/**
 	 * The Class CurrentBlockStepper.
 	 */
 	class CurrentBlockStepper implements TimedControl, KeyboardControl {
-		
+
 		/** The key events. */
 		private Queue<KeyEvent> keyEvents;
 
@@ -371,31 +397,18 @@ public class GameStepper implements TimedControl {
 				}
 			};
 		}
-		
-		/* (non-Javadoc)
-		 * @see framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
-		 */
-		@Override
-		public void keyPressed(KeyEvent event) {
 
-		}
-
-		/* (non-Javadoc)
-		 * @see framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
-		 */
-		@Override
-		public void keyReleased(KeyEvent event) {
-			Point p = currentMainBlock.getPosition();
+		private void move(KeyEvent event) {
 			// arrow left is pressed
 			if (event.getKeyCode() == KeyEvent.VK_LEFT) {
 				keyEvents.add(event);
 			}
 			// arrow right is pressed
-			else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
+			if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
 				keyEvents.add(event);
 			}
 			// arrow down is pressed
-			else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (event.getKeyCode() == KeyEvent.VK_DOWN) {
 				keyEvents.add(event);
 			}
 			// arrow up is pressed
@@ -404,16 +417,45 @@ public class GameStepper implements TimedControl {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
+		 */
+		@Override
+		public void keyPressed(KeyEvent event) {
+			move(event);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
+		 */
+		@Override
+		public void keyReleased(KeyEvent event) {
+			keyEvents.clear();
+			// move(event);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
 		 */
 		@Override
 		public void keyTyped(KeyEvent event) {
-			
+
 		}
 
-		/* (non-Javadoc)
-		 * @see framework.events.TimedControl#onTimedEvent(framework.core.TimedEvent)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * framework.events.TimedControl#onTimedEvent(framework.core.TimedEvent)
 		 */
 		@Override
 		public void onTimedEvent(TimedEvent t) {
@@ -422,15 +464,15 @@ public class GameStepper implements TimedControl {
 				Point p = currentMainBlock.getPosition();
 				// arrow left is pressed
 				if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					checkMainBlockCollisionHorizontal(new Point(p.x-1, p.y));
+					checkMainBlockCollisionHorizontal(new Point(p.x - 1, p.y));
 				}
 				// arrow right is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					checkMainBlockCollisionHorizontal(new Point(p.x+1, p.y));
+					checkMainBlockCollisionHorizontal(new Point(p.x + 1, p.y));
 				}
 				// arrow down is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					checkMainBlockCollisionDown(new Point(p.x, p.y+1));
+					checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
 				}
 				// arrow up is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -439,12 +481,14 @@ public class GameStepper implements TimedControl {
 			}
 		}
 		
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see framework.events.TimedControl#getPeriod()
 		 */
 		@Override
 		public long getPeriod() {
-			return 200;
+			return 100;
 		}
 	}
 

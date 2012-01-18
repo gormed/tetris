@@ -17,7 +17,7 @@
  * File: FieldCollision.java
  * Type: logic.FieldCollision
  * 
- * Documentation created: 18.01.2012 - 16:13:32 by Hans
+ * Documentation created: 18.01.2012 - 19:33:39 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -54,20 +54,23 @@ public class FieldCollision {
 	}
 
 	/** The Constant GAME_WIDTH. */
-	private static final int GAME_WIDTH = 20;
+	public static final int GAME_WIDTH = 12;
 
 	/** The Constant GAME_HEIGHT. */
-	private static final int GAME_HEIGHT = 30;
+	public static final int GAME_HEIGHT = 30;
 
 	/** The game array. */
 	private int[][] gameArray;
 
 	/**
 	 * Sets the collision field x,y pair to a given value.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param value the value
+	 * 
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param value
+	 *            the value
 	 */
 	void setCollisionField(int x, int y, int value) {
 		gameArray[x][y] = value;
@@ -90,6 +93,10 @@ public class FieldCollision {
 		}
 		return -1;
 	}
+
+	// ========================================================================
+	// Block Collision Checks
+	// ========================================================================
 
 	/**
 	 * Check collision for a specific block.
@@ -153,8 +160,9 @@ public class FieldCollision {
 
 	/**
 	 * Adds the inactive block.
-	 *
-	 * @param obj the obj
+	 * 
+	 * @param obj
+	 *            the obj
 	 */
 	void addInactiveBlock(BaseObject obj) {
 		Point p = obj.getPosition();
@@ -170,4 +178,48 @@ public class FieldCollision {
 		}
 	}
 
+	// ========================================================================
+	// Line Removal
+	// ========================================================================
+
+	/**
+	 * Checks the lines of the game-field and removes full lines from the array.
+	 *
+	 * @return the number of removed lines
+	 */
+	int checkLines() {
+
+		boolean lineFull = false;
+		boolean[] linesFull = new boolean[GAME_HEIGHT];
+
+		int linesRemoved = 0;
+		int linesFilled = 0;
+
+		for (int j = GAME_HEIGHT - 1; j > 4; j--) {
+			for (int i = 0; i < GAME_WIDTH; i++) {
+				if (gameArray[i][j] == 1) {
+					lineFull = true;
+				} else {
+					lineFull = false;
+					break;
+				}
+			}
+			if (lineFull) {
+				linesFull[j] = true;
+				linesFilled++;
+			}
+		}
+		
+		linesRemoved = linesFilled;
+
+		for (; linesFilled > 0; linesFilled--) {
+			for (int j = GAME_HEIGHT - 1; j >= GAME_HEIGHT - linesFilled - 1; j--) {
+				for (int i = 0; (i < GAME_WIDTH && j > 0 && j < GAME_HEIGHT); i++) {
+					gameArray[i][j] = gameArray[i][j - 1];
+					gameArray[i][j - 1] = 0;
+				}
+			}
+		}
+		return linesRemoved;
+	}
 }
