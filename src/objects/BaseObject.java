@@ -49,14 +49,6 @@ abstract public class BaseObject extends UpdateObject {
 	
 	/** The position. */
 	protected Point position;
-	
-	protected Point lastPosition;
-	
-	protected int leftOffset;
-	
-	protected int rightOffset;
-	
-	protected int bottomOffset;
 
 	/**
 	 * Instantiates a new base object.
@@ -66,7 +58,6 @@ abstract public class BaseObject extends UpdateObject {
 		raster = new boolean[4][4];
 		blocks = new FramedRect[4][4];
 		position = new Point();
-		lastPosition = new Point();
 	}
 
 	/**
@@ -107,7 +98,6 @@ abstract public class BaseObject extends UpdateObject {
 	 * @param y the y
 	 */
 	public void setPosition(int x, int y) {
-		lastPosition = position;
 		position = new Point(x, y);
 		setBlockPositions();
 	}
