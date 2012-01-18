@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
@@ -24,12 +23,10 @@
 
 package objects;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 
-
 import framework.core.Time;
-
-
 
 /**
  * The Class Square.
@@ -44,9 +41,12 @@ public class Square extends BaseObject {
 		super();
 		blockType = BlockType.Square;
 		createRaster();
+		changeColor(Color.gray, Color.lightGray);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see objects.BaseObject#createRaster()
 	 */
 	@Override
@@ -55,11 +55,13 @@ public class Square extends BaseObject {
 		raster[2][1] = true;
 		raster[1][2] = true;
 		raster[2][2] = true;
-			
+
 		createBlocks();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#update(framework.core.Time)
 	 */
 	@Override
@@ -67,7 +69,9 @@ public class Square extends BaseObject {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#onClick(java.awt.event.MouseEvent)
 	 */
 	@Override
@@ -75,20 +79,20 @@ public class Square extends BaseObject {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#onRelease(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void onRelease(MouseEvent event) {
 
 	}
-	
+
 	@Override
 	protected void createTempRaster() {
 		tempRaster = raster;
-				
-		
-		
+
 	}
 
 }

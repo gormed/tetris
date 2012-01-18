@@ -39,10 +39,12 @@ public class Long extends BaseObject {
 		super();
 		blockType = BlockType.Long;
 		createRaster();
-		changeColor(Color.red, Color.orange);
+		changeColor(Color.black, Color.darkGray);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see objects.BaseObject#createRaster()
 	 */
 	@Override
@@ -51,11 +53,13 @@ public class Long extends BaseObject {
 		raster[1][1] = true;
 		raster[1][2] = true;
 		raster[1][3] = true;
-			
+
 		createBlocks();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#update(framework.core.Time)
 	 */
 	@Override
@@ -63,7 +67,9 @@ public class Long extends BaseObject {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#onClick(java.awt.event.MouseEvent)
 	 */
 	@Override
@@ -71,7 +77,9 @@ public class Long extends BaseObject {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see framework.core.UpdateObject#onRelease(java.awt.event.MouseEvent)
 	 */
 	@Override
@@ -79,39 +87,28 @@ public class Long extends BaseObject {
 
 	}
 
-
-
-	
-
 	@Override
 	protected void createTempRaster() {
-		switch(direction){
-		case 0: 
+		boolean[][] newRaster = new boolean[4][4];
+		switch (direction) {
+		case 0:
 		case 2:
-			{tempRaster[1][0] = false;
-			tempRaster[1][1] = false;
-			tempRaster[1][2] = false;
-			tempRaster[1][3] = false;
-			tempRaster[0][1] = true;
-			tempRaster[1][1] = true;
-			tempRaster[2][1] = true;
-			tempRaster[3][1] = true;
+			newRaster[0][1] = true;
+			newRaster[1][1] = true;
+			newRaster[2][1] = true;
+			newRaster[3][1] = true;
 			break;
-			}
+
 		case 1:
 		case 3:
-			tempRaster[0][1] = false;
-			tempRaster[1][1] = false;
-			tempRaster[2][1] = false;
-			tempRaster[3][1] = false;
-			tempRaster[1][0] = true;
-			tempRaster[1][1] = true;
-			tempRaster[1][2] = true;
-			tempRaster[1][3] = true;
+			newRaster[1][0] = true;
+			newRaster[1][1] = true;
+			newRaster[1][2] = true;
+			newRaster[1][3] = true;
 			break;
 		}
-		
-		
+		tempRaster = newRaster;
+
 	}
 
 }

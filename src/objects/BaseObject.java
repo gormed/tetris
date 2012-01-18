@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-
 import logic.FieldCollision;
 import framework.core.Time;
 import framework.core.UpdateObject;
@@ -46,17 +45,14 @@ abstract public class BaseObject extends UpdateObject {
 
 	/** The block type. */
 	protected BlockType blockType;
-	
+
 	/** The position. */
 	protected Point position;
-	
+
 	protected FramedRect[] baseBlocks;
-	
-	/** The direction for rotation 
-	 * 0 : down
-	 * 1 : left
-	 * 2 : up
-	 * 3 : right
+
+	/**
+	 * The direction for rotation 0 : down 1 : left 2 : up 3 : right
 	 */
 	protected int direction;
 
@@ -77,7 +73,9 @@ abstract public class BaseObject extends UpdateObject {
 	 * Creates the raster.
 	 */
 	protected abstract void createRaster();
+
 	protected abstract void createTempRaster();
+
 	/**
 	 * Gets the block type.
 	 * 
@@ -86,28 +84,26 @@ abstract public class BaseObject extends UpdateObject {
 	public BlockType getBlockType() {
 		return blockType;
 	}
-	
-	protected FramedRect[] getBlocks()
-	{
+
+	protected FramedRect[] getBlocks() {
 		return baseBlocks;
 	}
-	
-	protected void recreateBlocks(FramedRect [] paraBlocks)
-	{
+
+	protected void recreateBlocks() {
 		int n = 0;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
-					blocks[i][j] = paraBlocks[n];
-					blocks[i][j].setArrayCoord(i,j);
+					blocks[i][j] = baseBlocks[n];
+					blocks[i][j].setArrayCoord(i, j);
 					blocks[i][j].setPosition(position.x * 20, position.y * 20);
 					n++;
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Creates the blocks.
 	 */
@@ -127,38 +123,42 @@ abstract public class BaseObject extends UpdateObject {
 
 	/**
 	 * Sets the position.
-	 *
-	 * @param x the x
-	 * @param y the y
+	 * 
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	public void setPosition(int x, int y) {
 		position = new Point(x, y);
 		setBlockPositions();
 	}
-	
+
 	/**
 	 * Gets the position.
-	 *
+	 * 
 	 * @return the position
 	 */
 	public Point getPosition() {
 		return new Point(position.x, position.y);
 	}
-	
+
 	/**
 	 * Gets the sub block array.
-	 *
+	 * 
 	 * @return the sub block array
 	 */
 	public boolean[][] getSubBlockArray() {
 		return raster.clone();
 	}
-	
+
 	/**
 	 * Change color.
-	 *
-	 * @param border the border
-	 * @param inner the inner
+	 * 
+	 * @param border
+	 *            the border
+	 * @param inner
+	 *            the inner
 	 */
 	public void changeColor(Color border, Color inner) {
 		for (int i = 0; i < 4; i++) {
@@ -170,7 +170,7 @@ abstract public class BaseObject extends UpdateObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the block positions.
 	 */
@@ -183,31 +183,34 @@ abstract public class BaseObject extends UpdateObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * Rotates the block.
-	 *
+	 * 
 	 */
 	public void rotate() {
 		raster = tempRaster;
-		recreateBlocks(baseBlocks);
-		direction = (direction + 1)%4;
+		recreateBlocks();
+		direction = (direction + 1) % 4;
 	}
+
 	/**
 	 * Checks the blocks collision.
-	 *
-	 * @param collision the collision
+	 * 
+	 * @param collision
+	 *            the collision
 	 * @return true, if colliding
 	 */
 	public int checkCollision(FieldCollision collision, Point position) {
 		return collision.checkCollision(raster, position);
 
 	}
-	
+
 	/**
 	 * Checks the blocks collision by rotate.
-	 *
-	 * @param collision the collision
+	 * 
+	 * @param collision
+	 *            the collision
 	 * @return true, if colliding
 	 */
 	public int checkCollisionRotate(FieldCollision collision, Point position) {
@@ -215,7 +218,7 @@ abstract public class BaseObject extends UpdateObject {
 		return collision.checkCollision(tempRaster, position);
 
 	}
-	
+
 	/**
 	 * The Class FramedRect.
 	 */
@@ -238,14 +241,21 @@ abstract public class BaseObject extends UpdateObject {
 
 		/**
 		 * Instantiates a new framed rectangle.
-		 *
-		 * @param xPos the x pos
-		 * @param yPos the y pos
-		 * @param size the size
-		 * @param border the border
-		 * @param outer the outer
-		 * @param inner the inner
-		 * @param arrayIDX the array idx
+		 * 
+		 * @param xPos
+		 *            the x pos
+		 * @param yPos
+		 *            the y pos
+		 * @param size
+		 *            the size
+		 * @param border
+		 *            the border
+		 * @param outer
+		 *            the outer
+		 * @param inner
+		 *            the inner
+		 * @param arrayIDX
+		 *            the array idx
 		 */
 		public FramedRect(int xPos, int yPos, int size, int border,
 				Color outer, Color inner, Point arrayIDX) {
@@ -287,9 +297,8 @@ abstract public class BaseObject extends UpdateObject {
 				inner.draw();
 			}
 		}
-		
-		public void setArrayCoord(int x, int y)
-		{
+
+		public void setArrayCoord(int x, int y) {
 			arrayX = x;
 			arrayY = y;
 		}
@@ -338,10 +347,5 @@ abstract public class BaseObject extends UpdateObject {
 		}
 
 	}
-
-	 
-		
-		
-	
 
 }
