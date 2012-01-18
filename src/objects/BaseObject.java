@@ -1,12 +1,15 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Tetris Project (c) 2012 - 2011 by Hans Ferchland & Hady Khalifa
+ * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
  * 
  * Tetris is a tetris clone in java using the JIT Framework
  * 
  * 
- * Tetris rights are by its owners/creators (Hans Ferchland & Hady Khalifa). 
- * You have no right to edit, publish and/or deliver the code or application in any way! If that is done by someone, please report it!
+ * Tetris rights are by its owners/creators 
+ * (Hans Ferchland & Hady Khalifa). You have no right to 
+ * publish and/or deliver the code or application in any way!
+ * 
+ * If that is done by someone, please report it!
  * 
  * Email us: hans.ferchland@gmx.de
  * 
@@ -14,7 +17,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 17.01.2012 - 19:40:51 by Hans
+ * Documentation created: 18.01.2012 - 14:15:36 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -22,6 +25,8 @@ package objects;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+
+import logic.FieldCollision;
 
 import framework.core.Time;
 import framework.core.UpdateObject;
@@ -44,33 +49,30 @@ abstract public class BaseObject extends UpdateObject {
 	
 	/** The position. */
 	protected Point position;
+	
+	protected Point lastPosition;
+	
+	protected int leftOffset;
+	
+	protected int rightOffset;
+	
+	protected int bottomOffset;
 
 	/**
 	 * Instantiates a new base object.
 	 */
 	protected BaseObject() {
 		super();
-		raster = new boolean[2][4];
-		blocks = new FramedRect[2][4];
+		raster = new boolean[4][4];
+		blocks = new FramedRect[4][4];
 		position = new Point();
+		lastPosition = new Point();
 	}
 
 	/**
 	 * Creates the raster.
 	 */
 	protected abstract void createRaster();
-
-	/**
-	 * Draw block.
-	 * 
-	 * @param i
-	 *            the i
-	 * @param j
-	 *            the j
-	 */
-	protected void drawBlock(int i, int j) {
-		blocks[i][j].draw();
-	}
 
 	/**
 	 * Gets the block type.
@@ -85,7 +87,9 @@ abstract public class BaseObject extends UpdateObject {
 	 * Creates the blocks.
 	 */
 	protected void createBlocks() {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 4; i++) {
+			
+			
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
 					blocks[i][j] = new FramedRect(i * 20, j * 20, 20, 3,
@@ -103,6 +107,7 @@ abstract public class BaseObject extends UpdateObject {
 	 * @param y the y
 	 */
 	public void setPosition(int x, int y) {
+		lastPosition = position;
 		position = new Point(x, y);
 		setBlockPositions();
 	}
@@ -116,6 +121,10 @@ abstract public class BaseObject extends UpdateObject {
 		return new Point(position.x, position.y);
 	}
 	
+	public boolean[][] getSubBlockArray() {
+		return raster.clone();
+	}
+	
 	/**
 	 * Change color.
 	 *
@@ -123,7 +132,7 @@ abstract public class BaseObject extends UpdateObject {
 	 * @param inner the inner
 	 */
 	public void changeColor(Color border, Color inner) {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
 					blocks[i][j].outer.changeColor(border);
@@ -137,7 +146,7 @@ abstract public class BaseObject extends UpdateObject {
 	 * Sets the block positions.
 	 */
 	protected void setBlockPositions() {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
 					blocks[i][j].setPosition(position.x * 20, position.y * 20);
@@ -153,6 +162,17 @@ abstract public class BaseObject extends UpdateObject {
 	 * @param value the times to rotate. 1 times means 90 degree, 2 = 180 degree, and so on
 	 */
 	public abstract void rotate(int dir, int value);
+	
+	/**
+	 * Checks the blocks collision.
+	 *
+	 * @param collision the collision
+	 * @return true, if colliding
+	 */
+	public int checkCollision(FieldCollision collision, Point position) {
+		return collision.checkCollision(raster, position);
+
+	}
 	
 	/**
 	 * The Class FramedRect.

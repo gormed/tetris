@@ -1,12 +1,15 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Tetris Project (c) 2012 - 2011 by Hans Ferchland & Hady Khalifa
+ * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
  * 
  * Tetris is a tetris clone in java using the JIT Framework
  * 
  * 
- * Tetris rights are by its owners/creators (Hans Ferchland & Hady Khalifa). 
- * You have no right to edit, publish and/or deliver the code or application in any way! If that is done by someone, please report it!
+ * Tetris rights are by its owners/creators 
+ * (Hans Ferchland & Hady Khalifa). You have no right to 
+ * publish and/or deliver the code or application in any way!
+ * 
+ * If that is done by someone, please report it!
  * 
  * Email us: hans.ferchland@gmx.de
  * 
@@ -14,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 17.01.2012 - 21:55:05 by Hans
+ * Documentation created: 18.01.2012 - 16:13:43 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -60,6 +63,9 @@ public class GameStepper implements TimedControl {
 	/** The next main block. */
 	private BaseObject nextMainBlock;
 	
+	/** The collision. */
+	private FieldCollision collision;
+	
 	/**
 	 * Gets the single instance of GameStepper.
 	 * 
@@ -79,6 +85,7 @@ public class GameStepper implements TimedControl {
 		Application.getInstance().addTimedObject(this);
 		gameObjects = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
+		collision = FieldCollision.getInstance();
 	}
 	
 	/**
@@ -150,14 +157,37 @@ public class GameStepper implements TimedControl {
 	public void onTimedEvent(TimedEvent t) {
 
 		Point p = currentMainBlock.getPosition();
+		checkMainBlockCollisionDown(new Point(p.x, p.y + 1));
 
-		if (p.y < 26)
-			currentMainBlock.setPosition(p.x, p.y + 1);
-		else {
+	}
+	
+	/**
+	 * Check main block collision.
+	 *
+	 * @param desired the desired
+	 */
+	private void checkMainBlockCollisionDown(Point desired) {
+		if (currentMainBlock.checkCollision(collision, desired) == 1) {
+			collision.addInactiveBlock(currentMainBlock);
 			setCurrentBlock(nextMainBlock);
 			generateNextBlock();
+		} else {
+			currentMainBlock.setPosition(desired.x, desired.y);
 		}
+	}
+	
+	/**
+	 * Check main block collision horizontal.
+	 *
+	 * @param desired the desired
+	 */
+	private void checkMainBlockCollisionHorizontal(Point desired) {
+		int checkValue = currentMainBlock.checkCollision(collision, desired);
+		if (checkValue == 1 || checkValue == 2) {
 
+		} else {
+			currentMainBlock.setPosition(desired.x, desired.y);
+		}
 	}
 
 	/**
@@ -331,15 +361,15 @@ public class GameStepper implements TimedControl {
 			Point p = currentMainBlock.getPosition();
 			// arrow left is pressed
 			if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-				if (p.x > 0) keyEvents.add(event);
+				keyEvents.add(event);
 			}
 			// arrow right is pressed
 			else if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-				if (p.x < 10) keyEvents.add(event);
+				keyEvents.add(event);
 			}
 			// arrow down is pressed
 			else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-				if (p.y < 26) keyEvents.add(event);
+				keyEvents.add(event);
 			}
 		}
 
@@ -361,15 +391,15 @@ public class GameStepper implements TimedControl {
 				Point p = currentMainBlock.getPosition();
 				// arrow left is pressed
 				if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (p.x > 0) currentMainBlock.setPosition(p.x - 1, p.y);
+					checkMainBlockCollisionHorizontal(new Point(p.x-1, p.y));
 				}
 				// arrow right is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (p.x < 10) currentMainBlock.setPosition(p.x + 1, p.y);
+					checkMainBlockCollisionHorizontal(new Point(p.x+1, p.y));
 				}
 				// arrow down is pressed
 				else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (p.y < 26) currentMainBlock.setPosition(p.x, p.y + 1);
+					checkMainBlockCollisionDown(new Point(p.x, p.y+1));
 				}
 			}
 		}

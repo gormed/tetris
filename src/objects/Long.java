@@ -1,12 +1,15 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Tetris Project (c) 2012 - 2011 by Hans Ferchland & Hady Khalifa
+ * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
  * 
  * Tetris is a tetris clone in java using the JIT Framework
  * 
  * 
- * Tetris rights are by its owners/creators (Hans Ferchland & Hady Khalifa). 
- * You have no right to edit, publish and/or deliver the code or application in any way! If that is done by someone, please report it!
+ * Tetris rights are by its owners/creators 
+ * (Hans Ferchland & Hady Khalifa). You have no right to edit, 
+ * publish and/or deliver the code or application in any way! 
+ * 
+ * If that is done by someone, please report it!
  * 
  * Email us: hans.ferchland@gmx.de
  * 
@@ -14,7 +17,7 @@
  * File: Long.java
  * Type: objects.Long
  * 
- * Documentation created: 17.01.2012 - 19:29:35 by Hans
+ * Documentation created: 18.01.2012 - 01:19:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -44,10 +47,10 @@ public class Long extends BaseObject {
 	 */
 	@Override
 	protected void createRaster() {
-		raster[0][0] = true;
-		raster[0][1] = true;
-		raster[0][2] = true;
-		raster[0][3] = true;
+		raster[1][0] = true;
+		raster[1][1] = true;
+		raster[1][2] = true;
+		raster[1][3] = true;
 			
 		createBlocks();
 	}
