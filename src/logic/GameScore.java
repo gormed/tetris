@@ -17,7 +17,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 19.01.2012 - 16:34:22 by Hans
+ * Documentation created: 19.01.2012 - 17:28:34 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -78,6 +78,9 @@ public class GameScore {
 
 	/** The score label. */
 	private Score scoreLabel;
+	
+	/** The total lines removed. */
+	private int totalLinesRemoved = 0;
 
 	/**
 	 * Sets the score label.
@@ -157,14 +160,24 @@ public class GameScore {
 			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1);
 			calculateScore();
 			MusicPlayer.getInstance().playSound(i);
-			
+			totalLinesRemoved += i;
 		}
+	}
+	
+	/**
+	 * Gets the total lines removed.
+	 *
+	 * @return the total lines removed
+	 */
+	int getTotalLinesRemoved() {
+		return totalLinesRemoved;
 	}
 	
 	/**
 	 * Resets the game score.
 	 */
 	void resetGameScore() {
+		totalLinesRemoved = 0;
 		lastSubScore = 0;
 		totalScore = 0;
 		scoreLabel.refreshScore();

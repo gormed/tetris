@@ -18,7 +18,7 @@
  * File: TetrisGame.java
  * Type: core.TetrisGame
  * 
- * Documentation created: 19.01.2012 - 16:34:23 by Hans
+ * Documentation created: 19.01.2012 - 18:03:42 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -27,9 +27,9 @@ package core;
 import framework.core.Application;
 import framework.events.WindowControl;
 import gui.InfoBackground;
+import gui.Level;
 import gui.Score;
 
-import java.awt.Font;
 import java.awt.event.WindowEvent;
 
 import logic.GameScore;
@@ -47,11 +47,16 @@ public class TetrisGame {
 	/** The score. */
 	private static GameScore score;
 	
+	/** The player. */
+	@SuppressWarnings("unused")
 	private static MusicPlayer player;
 	
 	/** The gui score. */
 	@SuppressWarnings("unused")
 	private static Score guiScore;
+	
+	@SuppressWarnings("unused")
+	private static Level guiLevel;
 	
 	/** The gui info background. */
 	@SuppressWarnings("unused")
@@ -168,11 +173,11 @@ public class TetrisGame {
 	 */
 	public static void loadContent() {
 
-		Font f = new Font("Tahoma", Font.BOLD, 14);
 		guiInfoBackground = new InfoBackground(239,0,"resource/tetrisscore.png");
-		guiScore = new Score(score, f);
-
-		stepper.start();
+		guiScore = new Score(score);
+		guiLevel = new Level();
+		
+		stepper.startGame();
 		
 	}
 }

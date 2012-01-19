@@ -233,21 +233,20 @@ public class FieldCollision {
 				}
 			}
 			if (lineFull) {
+				
+				for (int i = 0; i < GAME_WIDTH; i++) {
+					gameArray[i][j] = 0;
+					graphicsArray[i][j].makeInvisible();
+					graphicsArray[i][j].dispose();
+					graphicsArray[i][j] = null;
+				}
+				
 				linesFull.add(linesFilled, j);
 				linesFilled++;
 			}
 		}
 
 		linesRemoved = linesFilled;
-
-		for (int j : linesFull) {
-			for (int i = 0; i < GAME_WIDTH; i++) {
-				gameArray[i][j] = 0;
-				graphicsArray[i][j].makeInvisible();
-				graphicsArray[i][j].dispose();
-				graphicsArray[i][j] = null;
-			}
-		}
 
 		for (linesFilled = 0; linesFilled < linesRemoved; linesFilled++) {
 			for (int j = linesFull.get(linesFilled) + linesFilled; j >= GAME_OVER_LINE; j--) {
@@ -281,7 +280,7 @@ public class FieldCollision {
 
 		for (int i = 0; i < GAME_WIDTH; i++) {
 			if (gameArray[i][GAME_OVER_LINE] == 1) {
-				MusicPlayer.getInstance().playSound(MusicPlayer.getInstance().GAMEOVER);
+				MusicPlayer.getInstance().playSound(MusicPlayer.GAMEOVER);
 				return true;
 			}
 		}

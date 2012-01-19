@@ -37,13 +37,15 @@ import framework.objects.Text;
 public class Score {
 
 	/** The Constant XPOS. */
-	public static final int XPOS = 265;
+	static final int XPOS = 265;
 
 	/** The Constant YPOS. */
-	public static final int YPOS = 350;
+	static final int YPOS = 338;
+	
+	static final Font FONT = new Font("Tahoma", Font.BOLD, 14);
 
 	/** The Constant title. */
-	public static final String title = "Total: ";
+	static final String title = "Total: ";
 
 	/** The score. */
 	private GameScore score;
@@ -62,14 +64,14 @@ public class Score {
 	 * @param font
 	 *            the font
 	 */
-	public Score(GameScore score, Font font) {
+	public Score(GameScore score) {
 
-		scoreLabel = new Text(XPOS, YPOS, "0", font, Color.BLACK);
+		scoreLabel = new Text(XPOS, YPOS, "0", FONT, Color.BLACK);
 		scoreLabel.makeVisible();
 		this.score = score;
 		score.setScoreLabel(this);
 
-		subScoreLabel = new Text(XPOS, YPOS + 30, "", font, Color.DARK_GRAY);
+		subScoreLabel = new Text(XPOS, YPOS + 30, "", FONT, Color.DARK_GRAY);
 		subScoreLabel.makeVisible();
 	}
 

@@ -17,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 19.01.2012 - 16:34:21 by Hans
+ * Documentation created: 19.01.2012 - 18:12:28 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -37,7 +37,9 @@ import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
 import framework.events.TimedControl;
 import gui.GameOver;
+import gui.Level;
 import gui.Pause;
+import gui.StartGame;
 
 /**
  * The Class GameStepper.
@@ -45,7 +47,15 @@ import gui.Pause;
 public class GameStepper implements TimedControl {
 
 	/** The Constant STANDARD_PERIOD. */
-	static final int STANDARD_PERIOD = 200;
+	static final int STANDARD_PERIOD = 800;
+	
+	/** The Constant GAME_LEVEL for the timed event period, this is the game-speed. */
+	static final int[] GAME_LEVEL = { 800, 700, 600, 500, 400, 300, 200, 150, 100, 50 };
+	
+	static final int MAX_LEVEL = 9;
+	
+	/** The Constant LINES_FOR_NEXT_LEVEL indicates the lines to be removed for the next level. */
+	static final int[] LINES_FOR_NEXT_LEVEL = { 5, 10, 20, 35, 50, 65, 80, 100 };
 
 	/** The instance. */
 	private static GameStepper instance;
@@ -76,9 +86,15 @@ public class GameStepper implements TimedControl {
 
 	/** The pause gui. */
 	private Pause pauseGUI;
+	
+	private StartGame startGameGUI;
 
 	/** The game over flag. */
-	private boolean gameOverFlag = false;
+	private boolean gameOverFlag = true;
+	
+	private int currentLevel = 0;
+	
+	private Level levelLabel;
 
 	/**
 	 * Gets the single instance of GameStepper.
@@ -96,13 +112,14 @@ public class GameStepper implements TimedControl {
 	 * Instantiates a new game stepper.
 	 */
 	private GameStepper() {
-		Application.getInstance().addTimedObject(this);
+		
 		inactiveBlocks = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 		collision = FieldCollision.getInstance();
 
 		pauseGUI = new Pause();
 		gameOverGUI = new GameOver();
+		startGameGUI = new StartGame();
 	}
 
 	/**
@@ -178,7 +195,33 @@ public class GameStepper implements TimedControl {
 			blockPointsTime++;
 		}
 	}
-
+	
+	/**
+	 * Sets the level period.
+	 *
+	 * @param level the new level period
+	 */
+	private void setLevelPeriod(int level) {
+		period = GAME_LEVEL[currentLevel = level];
+	}
+	
+	/**
+	 * Checks the level lines.
+	 *
+	 * @param totalLines the total lines
+	 */
+	private void checkLevelLines(int totalLines) {
+		if (currentLevel < MAX_LEVEL && totalLines >= LINES_FOR_NEXT_LEVEL[currentLevel]) {
+			setLevelPeriod(++currentLevel);
+			levelLabel.setLevel(currentLevel);
+			MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP);
+		}
+	}
+	
+	public void setLevelLabel(Level levelLabel) {
+		this.levelLabel = levelLabel;
+	}
+	
 	/**
 	 * This method is called if a block gets unmovable or inactive.
 	 */
@@ -195,6 +238,8 @@ public class GameStepper implements TimedControl {
 			generateNextBlock();
 			// check if a line is filled
 			checkLines();
+			// Level up?
+			checkLevelLines(GameScore.getInstance().getTotalLinesRemoved());
 		} else {
 			gameOver();
 		}
@@ -298,9 +343,52 @@ public class GameStepper implements TimedControl {
 				// If enter is pressed, the game restarts
 				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 					gameOverGUI.makeInvisible();
+					//addControls();
+					//start();
+					startGame();
+					Application.getInstance().removeKeyboardControl(this);
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent event) {
+
+			}
+
+			@Override
+			public void keyTyped(KeyEvent event) {
+
+			}
+		});
+	}
+	
+	/**
+	 * Start game.
+	 */
+	public void startGame() {
+		startGameGUI.makeVisible();
+		
+		
+		Application.getInstance().addKeyboardControl(new KeyboardControl() {
+
+			@Override
+			public void keyPressed(KeyEvent event) {
+				// If enter is pressed, the game restarts
+				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+					startGameGUI.makeInvisible();
+					levelLabel.setLevel(currentLevel);
+					setLevelPeriod(currentLevel);
 					addControls();
 					start();
 					Application.getInstance().removeKeyboardControl(this);
+				}
+				if (event.getKeyCode() == KeyEvent.VK_UP) {
+					if (currentLevel < MAX_LEVEL)
+						startGameGUI.changeDisplay(++currentLevel);
+				}
+				if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (currentLevel > 0)
+						startGameGUI.changeDisplay(--currentLevel);
 				}
 			}
 
@@ -382,8 +470,6 @@ public class GameStepper implements TimedControl {
 		 * Instantiates a new current block stepper.
 		 */
 		public CurrentBlockStepper() {
-			Application.getInstance().addTimedObject(this);
-			Application.getInstance().addKeyboardControl(this);
 			keyEvents = new Queue<KeyEvent>() {
 
 				LinkedList<KeyEvent> elements = new LinkedList<KeyEvent>();
