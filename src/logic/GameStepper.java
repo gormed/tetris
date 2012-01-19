@@ -111,7 +111,8 @@ public class GameStepper implements TimedControl {
 	 */
 	private void generateNextBlock() {
 		Random r = new Random(System.currentTimeMillis());
-		int random = Math.abs(r.nextInt()) % 7; // TODO: Change 2 into 7, this is the number of block-types
+		int random = Math.abs(r.nextInt()) % 7; // TODO: Change 2 into 7, this
+												// is the number of block-types
 
 		switch (random) {
 		case 0:
@@ -200,20 +201,21 @@ public class GameStepper implements TimedControl {
 
 	/**
 	 * Check main block collision by rotate.
-	 *
-	 * @param desired the desired
+	 * 
+	 * @param desired
+	 *            the desired
 	 */
 	private void checkMainBlockCollisionRotate(Point desired) {
-		int checkValue = currentMainBlock.checkCollisionRotate(collision, desired);
+		int checkValue = currentMainBlock.checkCollisionRotate(collision,
+				desired);
 		if (checkValue == 1 || checkValue == 2) {
 
 		} else {
 			currentMainBlock.rotate();
-			
+
 		}
 	}
-			
-	
+
 	/**
 	 * Check main block collision horizontal.
 	 * 
@@ -250,12 +252,12 @@ public class GameStepper implements TimedControl {
 					o.setPosition(p.x, p.y + value);
 			}
 		}
-		
+
 		for (BaseObject o : remove) {
 			inactiveBlocks.remove(o);
 			o.dispose();
 		}
-		
+
 		remove.clear();
 		remove = null;
 	}
@@ -268,6 +270,40 @@ public class GameStepper implements TimedControl {
 	@Override
 	public long getPeriod() {
 		return period;
+	}
+
+	public void pause() {
+		Application.getInstance().pause();
+		Application.getInstance().removeKeyboardControl(blockStepper);
+		Application.getInstance().removeTimedObject(blockStepper);
+		Application.getInstance().removeTimedObject(this);
+		Application.getInstance().addKeyboardControl(new KeyboardControl() {
+			@Override
+			public void keyPressed(KeyEvent event) {
+				if (event.getKeyCode() == KeyEvent.VK_P) {
+					Application.getInstance().removeKeyboardControl(this);
+					addControls();
+					Application.getInstance().resume();
+
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent event) {
+
+			}
+
+			@Override
+			public void keyTyped(KeyEvent event) {
+
+			}
+		});
+	}
+
+	private void addControls() {
+		Application.getInstance().addTimedObject(blockStepper);
+		Application.getInstance().addKeyboardControl(blockStepper);
+		Application.getInstance().addTimedObject(this);
 	}
 
 	/**
@@ -415,6 +451,11 @@ public class GameStepper implements TimedControl {
 			else if (event.getKeyCode() == KeyEvent.VK_UP) {
 				keyEvents.add(event);
 			}
+			// "P" is pressed
+			else if (event.getKeyCode() == KeyEvent.VK_P) {
+				keyEvents.clear();
+				keyEvents.add(event);
+			}
 		}
 
 		/*
@@ -478,9 +519,13 @@ public class GameStepper implements TimedControl {
 				else if (e.getKeyCode() == KeyEvent.VK_UP) {
 					checkMainBlockCollisionRotate(new Point(p.x, p.y));
 				}
+				// "P" is pressed
+				else if (e.getKeyCode() == KeyEvent.VK_P) {
+					pause();
+				}
 			}
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * 
