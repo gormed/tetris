@@ -37,7 +37,9 @@ public class MusicPlayer {
 		File soundFile;
 		switch (numOfLines) {
 		case 1:
-			soundFile = new File("resource/media/multikill.wav");
+			soundFile = new File("resource/media/multikill.wav"); // TODO neuer
+																	// sound
+																	// einbetten
 			break;
 		case 2:
 			soundFile = new File("resource/media/doublekill.wav");
@@ -52,6 +54,28 @@ public class MusicPlayer {
 			soundFile = new File("resource/media/doublekill.wav");
 			break;
 		}
+		try {
+			AudioInputStream audioIn = AudioSystem
+					.getAudioInputStream(soundFile);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioIn);
+			clip.start();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	}
+
+	public void playSoundGameOver() {
+		File soundFile;
+
+		soundFile = new File("resource/media/doublekill.wav"); // TODO Sound einfuegen
 		try {
 			AudioInputStream audioIn = AudioSystem
 					.getAudioInputStream(soundFile);

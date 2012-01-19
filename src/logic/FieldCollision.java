@@ -284,7 +284,7 @@ public class FieldCollision {
 				return true;
 			}
 		}
-
+		MusicPlayer.getInstance().playSoundGameOver();
 		return false;
 	}
 
