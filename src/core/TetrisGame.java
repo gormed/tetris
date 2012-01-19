@@ -24,16 +24,17 @@
 
 package core;
 
+import framework.core.Application;
+import framework.events.WindowControl;
+import gui.InfoBackground;
+import gui.Score;
+
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 
 import logic.GameScore;
 import logic.GameStepper;
-import framework.core.Application;
-import framework.events.WindowControl;
-import gui.Score;
-
-import gui.InfoBackground;
+import logic.MusicPlayer;
 
 /**
  * The Class TetrisGame.
@@ -45,6 +46,8 @@ public class TetrisGame {
 	
 	/** The score. */
 	private static GameScore score;
+	
+	private static MusicPlayer player;
 	
 	/** The gui score. */
 	@SuppressWarnings("unused")
@@ -153,6 +156,7 @@ public class TetrisGame {
 		
 		stepper = GameStepper.getInstance();
 		score = GameScore.getInstance();
+		player = MusicPlayer.getInstance();
 		
 		loadContent();
 		
