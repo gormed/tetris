@@ -452,10 +452,10 @@ public class GameStepper implements TimedControl {
 		if (gameOverFlag)
 			return;
 		// Application.getInstance().pause();
+		MusicPlayer.getInstance().stopBGSound();
 		Application.getInstance().removeKeyboardControl(blockStepper);
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
-		MusicPlayer.getInstance().stopBGSound();
 		gamePausedFlag = true;
 		pauseGUI.makeVisible();
 

@@ -122,7 +122,7 @@ public class MusicPlayer {
 			//reduce volume
 			FloatControl gainControl = (FloatControl) backGroundClip.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-10.0f);
-			startBGSound();
+			backGroundClip.loop(42);
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -132,11 +132,12 @@ public class MusicPlayer {
 		}
 	}
 	public void startBGSound(){
-		backGroundClip.start();
-		backGroundClip.loop(42);
+		FloatControl gainControl = (FloatControl) backGroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+		gainControl.setValue(-10.0f);
 	}
 	public void stopBGSound(){
-		backGroundClip.stop();
+		FloatControl gainControl = (FloatControl) backGroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+		gainControl.setValue(-40.0f);
 	}
 
 
