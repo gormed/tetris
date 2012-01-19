@@ -212,7 +212,7 @@ public class FieldCollision {
 	 * 
 	 * @return the number of removed lines
 	 */
-	void checkLines() {
+	int checkLines() {
 
 		boolean lineFull = false;
 		ArrayList<Integer> linesFull = new ArrayList<Integer>();
@@ -263,6 +263,7 @@ public class FieldCollision {
 			@SuppressWarnings("unused")
 			int k = 0;
 		}
+		return linesFull.size();
 	}
 
 	// ========================================================================

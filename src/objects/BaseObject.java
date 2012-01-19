@@ -67,7 +67,7 @@ abstract public class BaseObject extends UpdateObject {
 		tempRaster = new boolean[4][4];
 		blocks = new FramedRect[4][4];
 		baseBlocks = new FramedRect[4];
-		position = new Point();
+		position = new Point(14, 8);
 	}
 	
 	/**
@@ -175,7 +175,7 @@ abstract public class BaseObject extends UpdateObject {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
-					blocks[i][j] = new FramedRect(i * 20, j * 20, 20, 3,
+					blocks[i][j] = new FramedRect(position.x * 20 + i * 20,position.y * 20 + j * 20, 20, 3,
 							Color.BLUE, Color.CYAN, new Point(i, j));
 					blocks[i][j].makeVisible();
 					baseBlocks[n++] = blocks[i][j];

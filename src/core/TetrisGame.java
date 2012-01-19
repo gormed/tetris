@@ -24,16 +24,17 @@
 
 package core;
 
-
-import framework.core.Application;
-import gui.InfoBackground;
-import gui.Score;
-
 import java.awt.Font;
+import java.awt.event.WindowEvent;
 
 import logic.GameScore;
 import logic.GameStepper;
+import framework.core.Application;
+import framework.events.WindowControl;
+import framework.objects.Text;
+import gui.Score;
 
+import gui.InfoBackground;
 
 /**
  * The Class TetrisGame.
@@ -50,6 +51,8 @@ public class TetrisGame {
 	private static Score guiScore;
 	
 	private static InfoBackground guiInfoBackground;
+	
+	public static Text pauseLabel;
 
 	/**
 	 * The main method.
@@ -58,6 +61,92 @@ public class TetrisGame {
 	 */
 	public static void main(String[] args) {
 		Application app = Application.getInstance();
+		
+		app.addWindowControl(new WindowControl() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowOpened(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowOpened(WindowEvent event) {
+				// do nothing, you could load some resources here or sth like
+				// that
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowIconified(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowIconified(WindowEvent event) {
+				Application.getInstance().pause();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowDeiconified(java.awt.event.WindowEvent
+			 * )
+			 */
+			@Override
+			public void windowDeiconified(WindowEvent event) {
+				Application.getInstance().resume();
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowDeactivated(java.awt.event.WindowEvent
+			 * )
+			 */
+			@Override
+			public void windowDeactivated(WindowEvent event) {
+				Application.getInstance().pause();
+				GameStepper.getInstance().pause();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowClosing(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowClosing(WindowEvent event) {
+				if (Application.getInstance().isRunning())
+					Application.getInstance().terminate();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowClosed(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowClosed(WindowEvent event) {
+				// do nothing
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * events.WindowControl#windowActivated(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowActivated(WindowEvent event) {
+				Application.getInstance().resume();
+			}
+		});
 		
 		app.setDimensions(400, 600);
 		app.setTitle("Tetris");
@@ -76,7 +165,7 @@ public class TetrisGame {
 	public static void loadContent() {
 
 		Font f = new Font("Tahoma", Font.BOLD, 14);
-		guiInfoBackground = new InfoBackground(240,0,"resource/tetrisscore.png");
+		guiInfoBackground = new InfoBackground(239,0,"resource/tetrisscore.png");
 		guiScore = new Score(score, f);
 		
 

@@ -22,6 +22,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -31,19 +33,22 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
+import core.TetrisGame;
+
 import objects.BaseObject;
 import objects.BlockType;
 import framework.core.Application;
 import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
 import framework.events.TimedControl;
+import framework.objects.Text;
 
 /**
  * The Class GameStepper.
  */
 public class GameStepper implements TimedControl {
 
-	private static final int STANDARD_PERIOD = 200;
+	static final int STANDARD_PERIOD = 200;
 
 	/** The instance. */
 	private static GameStepper instance;
@@ -65,6 +70,8 @@ public class GameStepper implements TimedControl {
 
 	/** The inactive blocks. */
 	private ArrayList<BaseObject> inactiveBlocks;
+	
+	private int blockPointsTime = 0;
 
 	/**
 	 * Gets the single instance of GameStepper.
@@ -107,7 +114,8 @@ public class GameStepper implements TimedControl {
 	private void setCurrentBlock(BaseObject block) {
 		inactiveBlocks.add(currentMainBlock);
 		currentMainBlock = block;
-		GameScore.getInstance().setTimeBlockCreated(System.currentTimeMillis());
+		nextMainBlock.setPosition(5, 0);
+		GameScore.getInstance().setTimeBlockCreated(blockPointsTime = 0);
 	}
 
 	/**
@@ -144,7 +152,7 @@ public class GameStepper implements TimedControl {
 			nextMainBlock = new objects.Square();
 			break;
 		}
-		nextMainBlock.setPosition(5, 0);
+		nextMainBlock.setPosition(14, 8);
 	}
 
 	/*
@@ -158,7 +166,7 @@ public class GameStepper implements TimedControl {
 
 		Point p = currentMainBlock.getPosition();
 		checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
-
+		blockPointsTime++;
 	}
 
 	/**
@@ -169,8 +177,9 @@ public class GameStepper implements TimedControl {
 		collision.addInactiveBlock(currentMainBlock);
 		// calculate score if block get inactive
 		GameScore.getInstance()
-				.setTimeBlockInactive(System.currentTimeMillis());
-
+				.setTimeBlockInactive(blockPointsTime);
+		
+		
 		if (!checkGameOver()) {
 			// get the next block and set that as the current one
 			setCurrentBlock(nextMainBlock);
@@ -185,7 +194,7 @@ public class GameStepper implements TimedControl {
 	 * Checks lines and sets all blocks on the new position.
 	 */
 	private void checkLines() {
-		collision.checkLines();
+		GameScore.getInstance().linesRemoved(collision.checkLines());
 	}
 
 	/**
@@ -275,18 +284,24 @@ public class GameStepper implements TimedControl {
 	}
 
 	public void pause() {
-		Application.getInstance().pause();
+		//Application.getInstance().pause();
 		Application.getInstance().removeKeyboardControl(blockStepper);
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
+		
+		if (TetrisGame.pauseLabel == null)
+			TetrisGame.pauseLabel = new Text(6 * 20, 15 * 20, "PAUSE", new Font("Tahoma", Font.BOLD, 26), Color.BLACK);
+		TetrisGame.pauseLabel.makeVisible();
+		
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
+			
 			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.getKeyCode() == KeyEvent.VK_P) {
+					TetrisGame.pauseLabel.makeInvisible();
 					Application.getInstance().removeKeyboardControl(this);
 					addControls();
-					Application.getInstance().resume();
-
+				//Application.getInstance().resume();
 				}
 			}
 

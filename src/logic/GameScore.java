@@ -17,7 +17,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 18.01.2012 - 16:57:07 by Hans
+ * Documentation created: 19.01.2012 - 15:32:13 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -30,6 +30,13 @@ import gui.Score;
 public class GameScore {
 
 	private static final int BLOCK_SCORE = 5;
+	
+	
+	private static final int MAX_TIME = 30;
+	
+	private static final int POINTS_PER_LINE = 250;
+	
+	private static final int LINE_MULTIPLICATOR = 2;
 
 	/** The instance. */
 	private static GameScore instance;
@@ -61,10 +68,10 @@ public class GameScore {
 	private int lastSubScore;
 
 	/** The time block created. */
-	private long timeBlockCreated;
+	private int timeBlockCreated;
 
 	/** The time block inactive. */
-	private long timeBlockInactive;
+	private int timeBlockInactive;
 
 	/** The score label. */
 	private Score scoreLabel;
@@ -85,7 +92,7 @@ public class GameScore {
 	 * @param time
 	 *            the new time block created
 	 */
-	void setTimeBlockCreated(long time) {
+	void setTimeBlockCreated(int time) {
 		timeBlockCreated = time;
 	}
 
@@ -95,8 +102,9 @@ public class GameScore {
 	 * @param time
 	 *            the new time block inactive
 	 */
-	void setTimeBlockInactive(long time) {
+	void setTimeBlockInactive(int time) {
 		timeBlockInactive = time;
+		calculateSubScore();
 		calculateScore();
 	}
 
@@ -104,18 +112,14 @@ public class GameScore {
 	 * Calculate sub score.
 	 */
 	private void calculateSubScore() {
-		long diff = timeBlockInactive - timeBlockCreated;
-		float sec = diff * 0.001f;
-		float max = GameStepper.getInstance().getPeriod() * 0.001f
-				* FieldCollision.GAME_HEIGHT;
-		lastSubScore = (int) (max - sec) * BLOCK_SCORE;
+		int diff = timeBlockInactive - timeBlockCreated;
+		lastSubScore = (MAX_TIME - diff) * BLOCK_SCORE;
 	}
 
 	/**
 	 * Calculate score.
 	 */
 	private void calculateScore() {
-		calculateSubScore();
 		totalScore += lastSubScore;
 		scoreLabel.refreshScore();
 	}
@@ -136,6 +140,20 @@ public class GameScore {
 	 */
 	public int getSubScore() {
 		return lastSubScore;
+	}
+
+	/**
+	 * Lines removed.
+	 *
+	 * @param i the i
+	 */
+	void linesRemoved(int i) {
+		if (i > 4 || i < 1)
+			return;
+		else {
+			lastSubScore = 250 + 250 * LINE_MULTIPLICATOR * (i-1);
+			calculateScore();
+		}
 	}
 
 }
