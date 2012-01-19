@@ -56,7 +56,7 @@ public class GameStepper implements TimedControl {
 	static final int MAX_LEVEL = 9;
 	
 	/** The Constant LINES_FOR_NEXT_LEVEL indicates the lines to be removed for the next level. */
-	static final int[] LINES_FOR_NEXT_LEVEL = { 5, 10, 20, 35, 50, 65, 80, 100 };
+	static final int[] LINES_FOR_NEXT_LEVEL = { 5, 10, 15, 25, 40, 55, 70, 90, 110 };
 
 	/** The instance. */
 	private static GameStepper instance;
