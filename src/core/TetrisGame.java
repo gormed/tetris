@@ -1,3 +1,4 @@
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
@@ -20,15 +21,18 @@
  * Documentation created: 18.01.2012 - 16:50:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 package core;
+
+
+import framework.core.Application;
+import gui.InfoBackground;
+import gui.Score;
 
 import java.awt.Font;
 
 import logic.GameScore;
 import logic.GameStepper;
-import objects.Square;
-import framework.core.Application;
-import gui.Score;
 
 
 /**
@@ -44,6 +48,8 @@ public class TetrisGame {
 	
 	/** The gui score. */
 	private static Score guiScore;
+	
+	private static InfoBackground guiInfoBackground;
 
 	/**
 	 * The main method.
@@ -70,8 +76,10 @@ public class TetrisGame {
 	public static void loadContent() {
 
 		Font f = new Font("Tahoma", Font.BOLD, 14);
-		
+		guiInfoBackground = new InfoBackground(240,0,"resource/tetrisscore.png");
 		guiScore = new Score(score, f);
+		
+
 		
 		stepper.start();
 		

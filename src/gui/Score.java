@@ -37,10 +37,10 @@ import framework.objects.Text;
 public class Score extends Text {
 
 	/** The Constant XPOS. */
-	public static final int XPOS = 250;
+	public static final int XPOS = 290;
 	
 	/** The Constant YPOS. */
-	public static final int YPOS = 300;
+	public static final int YPOS = 360;
 	
 	/** The Constant title. */
 	public static final String title = "Total: ";
@@ -67,5 +67,6 @@ public class Score extends Text {
 	public void refreshScore() {
 		changeText(title + score.getGameScore());
 	}
-
+	
+	
 }
