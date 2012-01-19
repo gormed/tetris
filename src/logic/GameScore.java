@@ -156,7 +156,7 @@ public class GameScore {
 		else {
 			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1);
 			calculateScore();
-			MusicPlayer.getInstance().playSoundByLineNum(i);
+			MusicPlayer.getInstance().playSound(i);
 			
 		}
 	}
