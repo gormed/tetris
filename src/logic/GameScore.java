@@ -17,7 +17,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 19.01.2012 - 16:09:59 by Hans
+ * Documentation created: 19.01.2012 - 16:34:22 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;

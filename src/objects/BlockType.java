@@ -6,8 +6,8 @@
  * 
  * 
  * Tetris rights are by its owners/creators 
- * (Hans Ferchland & Hady Khalifa). You have no right to edit, 
- * publish and/or deliver the code or application in any way! 
+ * (Hans Ferchland & Hady Khalifa). You have no right to 
+ * publish and/or deliver the code or application in any way!
  * 
  * If that is done by someone, please report it!
  * 
@@ -17,7 +17,7 @@
  * File: BlockType.java
  * Type: objects.BlockType
  * 
- * Documentation created: 18.01.2012 - 01:19:21 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;

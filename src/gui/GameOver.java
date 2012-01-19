@@ -17,7 +17,7 @@
  * File: GameOver.java
  * Type: gui.GameOver
  * 
- * Documentation created: 19.01.2012 - 15:56:17 by Hans
+ * Documentation created: 19.01.2012 - 16:34:22 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;

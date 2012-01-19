@@ -17,7 +17,7 @@
  * File: Pause.java
  * Type: gui.Pause
  * 
- * Documentation created: 19.01.2012 - 15:56:14 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;

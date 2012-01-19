@@ -6,8 +6,8 @@
  * 
  * 
  * Tetris rights are by its owners/creators 
- * (Hans Ferchland & Hady Khalifa). You have no right to edit, 
- * publish and/or deliver the code or application in any way! 
+ * (Hans Ferchland & Hady Khalifa). You have no right to 
+ * publish and/or deliver the code or application in any way!
  * 
  * If that is done by someone, please report it!
  * 
@@ -17,7 +17,7 @@
  * File: Square.java
  * Type: objects.Square
  * 
- * Documentation created: 18.01.2012 - 01:19:21 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -89,6 +89,9 @@ public class Square extends BaseObject {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see objects.BaseObject#createTempRaster()
+	 */
 	@Override
 	protected void createTempRaster() {
 		tempRaster = raster;

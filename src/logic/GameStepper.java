@@ -17,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 19.01.2012 - 16:01:44 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -44,6 +44,7 @@ import gui.Pause;
  */
 public class GameStepper implements TimedControl {
 
+	/** The Constant STANDARD_PERIOD. */
 	static final int STANDARD_PERIOD = 200;
 
 	/** The instance. */
@@ -66,13 +67,18 @@ public class GameStepper implements TimedControl {
 
 	/** The inactive blocks. */
 	private ArrayList<BaseObject> inactiveBlocks;
-	
+
 	/** The block points time to calculate score. */
 	private int blockPointsTime = 0;
-	
+
+	/** The game over gui. */
 	private GameOver gameOverGUI;
-	
+
+	/** The pause gui. */
 	private Pause pauseGUI;
+
+	/** The game over flag. */
+	private boolean gameOverFlag = false;
 
 	/**
 	 * Gets the single instance of GameStepper.
@@ -94,7 +100,7 @@ public class GameStepper implements TimedControl {
 		inactiveBlocks = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 		collision = FieldCollision.getInstance();
-		
+
 		pauseGUI = new Pause();
 		gameOverGUI = new GameOver();
 	}
@@ -107,7 +113,7 @@ public class GameStepper implements TimedControl {
 		generateNextBlock();
 		setCurrentBlock(nextMainBlock);
 		generateNextBlock();
-
+		gameOverFlag = false;
 	}
 
 	/**
@@ -166,10 +172,11 @@ public class GameStepper implements TimedControl {
 	 */
 	@Override
 	public void onTimedEvent(TimedEvent t) {
-
-		Point p = currentMainBlock.getPosition();
-		checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
-		blockPointsTime++;
+		if (!gameOverFlag) {
+			Point p = currentMainBlock.getPosition();
+			checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
+			blockPointsTime++;
+		}
 	}
 
 	/**
@@ -179,10 +186,8 @@ public class GameStepper implements TimedControl {
 		// add current block to inactives
 		collision.addInactiveBlock(currentMainBlock);
 		// calculate score if block get inactive
-		GameScore.getInstance()
-				.setTimeBlockInactive(blockPointsTime);
-		
-		
+		GameScore.getInstance().setTimeBlockInactive(blockPointsTime);
+
 		if (!checkGameOver()) {
 			// get the next block and set that as the current one
 			setCurrentBlock(nextMainBlock);
@@ -257,6 +262,7 @@ public class GameStepper implements TimedControl {
 	 */
 	private boolean checkGameOver() {
 		if (collision.isGameOver()) {
+			gameOverFlag = true;
 			Application.getInstance().removeTimedObject(this);
 			Application.getInstance().removeTimedObject(blockStepper);
 			Application.getInstance().removeKeyboardControl(blockStepper);
@@ -277,27 +283,24 @@ public class GameStepper implements TimedControl {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Game over gui.
 	 */
 	private void gameOver() {
-		Application.getInstance().removeKeyboardControl(blockStepper);
-		Application.getInstance().removeTimedObject(blockStepper);
-		Application.getInstance().removeTimedObject(this);
-		
+
 		gameOverGUI.makeVisible();
-		
+
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
-			
+
 			@Override
 			public void keyPressed(KeyEvent event) {
-				//If enter is pressed, the game restarts
+				// If enter is pressed, the game restarts
 				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 					gameOverGUI.makeInvisible();
-					Application.getInstance().removeKeyboardControl(this);
 					addControls();
 					start();
+					Application.getInstance().removeKeyboardControl(this);
 				}
 			}
 
@@ -323,23 +326,26 @@ public class GameStepper implements TimedControl {
 		return period;
 	}
 
+	/**
+	 * Pause.
+	 */
 	public void pause() {
-		//Application.getInstance().pause();
+		// Application.getInstance().pause();
 		Application.getInstance().removeKeyboardControl(blockStepper);
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
-		
+
 		pauseGUI.makeVisible();
-		
+
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
-			
+
 			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.getKeyCode() == KeyEvent.VK_P) {
 					pauseGUI.makeInvisible();
 					Application.getInstance().removeKeyboardControl(this);
 					addControls();
-				//Application.getInstance().resume();
+					// Application.getInstance().resume();
 				}
 			}
 
@@ -355,6 +361,9 @@ public class GameStepper implements TimedControl {
 		});
 	}
 
+	/**
+	 * Adds the controls.
+	 */
 	private void addControls() {
 		Application.getInstance().addTimedObject(blockStepper);
 		Application.getInstance().addKeyboardControl(blockStepper);
@@ -489,6 +498,11 @@ public class GameStepper implements TimedControl {
 			};
 		}
 
+		/**
+		 * Move.
+		 *
+		 * @param event the event
+		 */
 		private void move(KeyEvent event) {
 			// arrow left is pressed
 			if (event.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -519,6 +533,11 @@ public class GameStepper implements TimedControl {
 		 * @see
 		 * framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
 		 */
+		/**
+		 * Key pressed.
+		 *
+		 * @param event the event
+		 */
 		@Override
 		public void keyPressed(KeyEvent event) {
 			move(event);
@@ -529,6 +548,11 @@ public class GameStepper implements TimedControl {
 		 * 
 		 * @see
 		 * framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
+		 */
+		/**
+		 * Key released.
+		 *
+		 * @param event the event
 		 */
 		@Override
 		public void keyReleased(KeyEvent event) {
@@ -542,6 +566,11 @@ public class GameStepper implements TimedControl {
 		 * @see
 		 * framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
 		 */
+		/**
+		 * Key typed.
+		 *
+		 * @param event the event
+		 */
 		@Override
 		public void keyTyped(KeyEvent event) {
 
@@ -552,6 +581,11 @@ public class GameStepper implements TimedControl {
 		 * 
 		 * @see
 		 * framework.events.TimedControl#onTimedEvent(framework.core.TimedEvent)
+		 */
+		/**
+		 * On timed event.
+		 *
+		 * @param t the t
 		 */
 		@Override
 		public void onTimedEvent(TimedEvent t) {
@@ -585,6 +619,11 @@ public class GameStepper implements TimedControl {
 		 * (non-Javadoc)
 		 * 
 		 * @see framework.events.TimedControl#getPeriod()
+		 */
+		/**
+		 * Gets the period.
+		 *
+		 * @return the period
 		 */
 		@Override
 		public long getPeriod() {

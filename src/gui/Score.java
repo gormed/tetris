@@ -17,7 +17,7 @@
  * File: Score.java
  * Type: gui.Score
  * 
- * Documentation created: 19.01.2012 - 15:08:53 by Hans
+ * Documentation created: 19.01.2012 - 16:34:22 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;

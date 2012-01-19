@@ -17,7 +17,7 @@
  * File: StairR.java
  * Type: objects.StairR
  * 
- * Documentation created: 18.01.2012 - 21:25:40 by khalifa
+ * Documentation created: 19.01.2012 - 16:34:22 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;

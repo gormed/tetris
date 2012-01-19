@@ -17,7 +17,7 @@
  * File: AngleL.java
  * Type: objects.AngleL
  * 
- * Documentation created: 18.01.2012 - 21:22:31 by khalifa
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -87,6 +87,9 @@ public class AngleL extends BaseObject {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see objects.BaseObject#createTempRaster()
+	 */
 	@Override
 	protected void createTempRaster() {
 		boolean[][] newRaster = new boolean[4][4];

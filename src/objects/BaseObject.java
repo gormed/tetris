@@ -17,7 +17,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 19.01.2012 - 14:36:12 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -52,9 +52,7 @@ abstract public class BaseObject extends UpdateObject {
 	/** The base blocks references. */
 	protected FramedRect[] baseBlocks;
 
-	/**
-	 * The direction for rotation 0 : down 1 : left 2 : up 3 : right
-	 */
+	/** The direction for rotation 0 : down 1 : left 2 : up 3 : right. */
 	protected int direction;
 
 	/**
@@ -259,9 +257,9 @@ abstract public class BaseObject extends UpdateObject {
 
 	/**
 	 * Checks the blocks collision.
-	 * 
-	 * @param collision
-	 *            the collision
+	 *
+	 * @param collision the collision
+	 * @param position the position
 	 * @return true, if colliding
 	 */
 	public int checkCollision(FieldCollision collision, Point position) {
@@ -271,9 +269,9 @@ abstract public class BaseObject extends UpdateObject {
 
 	/**
 	 * Checks the blocks collision by rotate.
-	 * 
-	 * @param collision
-	 *            the collision
+	 *
+	 * @param collision the collision
+	 * @param position the position
 	 * @return true, if colliding
 	 */
 	public int checkCollisionRotate(FieldCollision collision, Point position) {

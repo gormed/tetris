@@ -17,7 +17,7 @@
  * File: StairL.java
  * Type: objects.StairL
  * 
- * Documentation created: 18.01.2012 - 21:25:05 by khalifa
+ * Documentation created: 19.01.2012 - 16:34:23 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;

@@ -17,7 +17,7 @@
  * File: FieldCollision.java
  * Type: logic.FieldCollision
  * 
- * Documentation created: 18.01.2012 - 21:23:36 by Hans
+ * Documentation created: 19.01.2012 - 16:34:21 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -62,11 +62,13 @@ public class FieldCollision {
 	/** The Constant GAME_HEIGHT. */
 	public static final int GAME_HEIGHT = 30;
 
+	/** The Constant GAME_OVER_LINE. */
 	public static final int GAME_OVER_LINE = 4;
 
 	/** The game array. */
 	private int[][] gameArray;
 
+	/** The graphics array. */
 	private FramedRect[][] graphicsArray;
 
 	/**
@@ -270,6 +272,11 @@ public class FieldCollision {
 	// Loose Condition
 	// ========================================================================
 
+	/**
+	 * Checks if is game over.
+	 *
+	 * @return true, if is game over
+	 */
 	boolean isGameOver() {
 
 		for (int i = 0; i < GAME_WIDTH; i++) {
