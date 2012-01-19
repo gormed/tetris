@@ -17,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 18.01.2012 - 19:34:20 by Hans
+ * Documentation created: 18.01.2012 - 23:08:28 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -32,6 +32,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import objects.BaseObject;
+import objects.BlockType;
 import framework.core.Application;
 import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
@@ -42,6 +43,8 @@ import framework.events.TimedControl;
  */
 public class GameStepper implements TimedControl {
 
+	private static final int STANDARD_PERIOD = 200;
+
 	/** The instance. */
 	private static GameStepper instance;
 
@@ -49,7 +52,7 @@ public class GameStepper implements TimedControl {
 	private static CurrentBlockStepper blockStepper;
 
 	/** The period. */
-	private long period = 400;
+	private long period = STANDARD_PERIOD;
 
 	/** The current main block. */
 	private BaseObject currentMainBlock;
@@ -60,6 +63,7 @@ public class GameStepper implements TimedControl {
 	/** The collision. */
 	private FieldCollision collision;
 
+	/** The inactive blocks. */
 	private ArrayList<BaseObject> inactiveBlocks;
 
 	/**
@@ -166,21 +170,22 @@ public class GameStepper implements TimedControl {
 		// calculate score if block get inactive
 		GameScore.getInstance()
 				.setTimeBlockInactive(System.currentTimeMillis());
-		// get the next block and set that as the current one
-		setCurrentBlock(nextMainBlock);
-		// generate preview of next block
-		generateNextBlock();
-		// check if a line is filled
-		checkLines();
+
+		if (!checkGameOver()) {
+			// get the next block and set that as the current one
+			setCurrentBlock(nextMainBlock);
+			// generate preview of next block
+			generateNextBlock();
+			// check if a line is filled
+			checkLines();
+		}
 	}
 
 	/**
 	 * Checks lines and sets all blocks on the new position.
 	 */
 	private void checkLines() {
-		int linesRemoved = collision.checkLines();
-		if (linesRemoved > 0)
-			removeLines(linesRemoved);
+		collision.checkLines();
 	}
 
 	/**
@@ -232,34 +237,31 @@ public class GameStepper implements TimedControl {
 	}
 
 	/**
-	 * Removes the lines.
+	 * Checks if game is over and ends game in case of.
 	 * 
-	 * TODO: This method needs rework! All blocks that are out of screen have to
-	 * be deleted!
-	 * 
-	 * @param value
-	 *            the value
+	 * @return true, if game is over
 	 */
-	public void removeLines(int value) {
-
-		ArrayList<BaseObject> remove = new ArrayList<BaseObject>();
-		for (BaseObject o : inactiveBlocks) {
-			if (o != null) {
-				Point p = o.getPosition();
-				if (p.y >= FieldCollision.GAME_HEIGHT + 4)
-					remove.add(o);
-				else
-					o.setPosition(p.x, p.y + value);
+	private boolean checkGameOver() {
+		if (collision.isGameOver()) {
+			Application.getInstance().removeTimedObject(this);
+			Application.getInstance().removeTimedObject(blockStepper);
+			Application.getInstance().removeKeyboardControl(blockStepper);
+			collision.resetField();
+			for (BaseObject o : inactiveBlocks) {
+				if (o != null) {
+					o.dispose();
+				}
 			}
+			inactiveBlocks.clear();
+			currentMainBlock.dispose();
+			currentMainBlock = null;
+			nextMainBlock.dispose();
+			nextMainBlock = null;
+			period = STANDARD_PERIOD;
+			blockStepper.keyEvents.clear();
+			return true;
 		}
-
-		for (BaseObject o : remove) {
-			inactiveBlocks.remove(o);
-			o.dispose();
-		}
-
-		remove.clear();
-		remove = null;
+		return false;
 	}
 
 	/*
@@ -533,7 +535,7 @@ public class GameStepper implements TimedControl {
 		 */
 		@Override
 		public long getPeriod() {
-			return 100;
+			return 50;
 		}
 	}
 

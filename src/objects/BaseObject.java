@@ -17,7 +17,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 18.01.2012 - 16:22:19 by Hans
+ * Documentation created: 19.01.2012 - 14:36:12 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -49,6 +49,7 @@ abstract public class BaseObject extends UpdateObject {
 	/** The position. */
 	protected Point position;
 
+	/** The base blocks references. */
 	protected FramedRect[] baseBlocks;
 
 	/**
@@ -68,12 +69,76 @@ abstract public class BaseObject extends UpdateObject {
 		baseBlocks = new FramedRect[4];
 		position = new Point();
 	}
+	
+	/**
+	 * Make inactive.
+	 *
+	 * @return the framed rect[]
+	 */
+	public FramedRect[] makeInactive() {
+		raster = null;
+		tempRaster = null;
+		blocks = null;
+		return baseBlocks.clone();
+	}
+
+	/**
+	 * Gets the sub block position.
+	 * 
+	 * @param i
+	 *            the i
+	 * @return the sub block position
+	 */
+	public Point getSubBlockPosition(int i) {
+		return new Point(position.x + baseBlocks[i].arrayX, position.y
+				+ baseBlocks[i].arrayY);
+	}
+
+	/**
+	 * Gets the sub block.
+	 * 
+	 * @param i
+	 *            the i
+	 * @return the sub block
+	 */
+	public Point getSubBlockCoords(int i) {
+		return new Point(baseBlocks[i].arrayX, baseBlocks[i].arrayY);
+	}
+
+	/**
+	 * Make invisible.
+	 */
+	public void makeInvisible() {
+		for (FramedRect f : baseBlocks) {
+			if (f != null)
+				f.makeInvisible();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see framework.core.UpdateObject#dispose()
+	 */
+	@Override
+	public boolean dispose() {
+		for (FramedRect f : baseBlocks) {
+			if (f != null) {
+				f.makeInvisible();
+				f.dispose();
+			}
+		}
+		return super.dispose();
+	}
 
 	/**
 	 * Creates the raster.
 	 */
 	protected abstract void createRaster();
 
+	/**
+	 * Creates the temporary raster for rotation.
+	 */
 	protected abstract void createTempRaster();
 
 	/**
@@ -85,10 +150,9 @@ abstract public class BaseObject extends UpdateObject {
 		return blockType;
 	}
 
-	protected FramedRect[] getBlocks() {
-		return baseBlocks;
-	}
-
+	/**
+	 * Recreates the sub-blocks e.g. after rotation.
+	 */
 	protected void recreateBlocks() {
 		int n = 0;
 		for (int i = 0; i < 4; i++) {
@@ -101,11 +165,10 @@ abstract public class BaseObject extends UpdateObject {
 				}
 			}
 		}
-
 	}
 
 	/**
-	 * Creates the blocks.
+	 * Creates the sub-blocks.
 	 */
 	protected void createBlocks() {
 		int n = 0;
@@ -222,7 +285,7 @@ abstract public class BaseObject extends UpdateObject {
 	/**
 	 * The Class FramedRect.
 	 */
-	class FramedRect extends CanvasObject {
+	public class FramedRect extends CanvasObject {
 
 		/** The border. */
 		private int border;
@@ -266,11 +329,10 @@ abstract public class BaseObject extends UpdateObject {
 			arrayY = arrayIDX.y;
 
 			this.outer = new Square(xPos, yPos, size, outer);
-			this.outer.makeVisible();
 
 			this.inner = new Square(xPos + border, yPos + border, size
 					- (2 * border), inner);
-			this.inner.makeVisible();
+			makeVisible();
 		}
 
 		/*
@@ -298,22 +360,45 @@ abstract public class BaseObject extends UpdateObject {
 			}
 		}
 
+		/**
+		 * Sets the array coord.
+		 *
+		 * @param x the x
+		 * @param y the y
+		 */
 		public void setArrayCoord(int x, int y) {
 			arrayX = x;
 			arrayY = y;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see framework.objects.CanvasObject#erase()
+		/* (non-Javadoc)
+		 * @see framework.objects.CanvasObject#makeVisible()
 		 */
 		@Override
-		protected void erase() {
-			if (isVisible()) {
-				outer.dispose();
-				inner.dispose();
-			}
+		public void makeVisible() {
+			inner.makeVisible();
+			outer.makeVisible();
+			super.makeVisible();
+		}
+
+		/* (non-Javadoc)
+		 * @see framework.objects.CanvasObject#makeInvisible()
+		 */
+		@Override
+		public void makeInvisible() {
+			inner.makeInvisible();
+			outer.makeInvisible();
+			super.makeInvisible();
+		}
+
+		/* (non-Javadoc)
+		 * @see framework.core.UpdateObject#dispose()
+		 */
+		@Override
+		public boolean dispose() {
+			inner.dispose();
+			outer.dispose();
+			return super.dispose();
 		}
 
 		/*
@@ -343,6 +428,14 @@ abstract public class BaseObject extends UpdateObject {
 		 */
 		@Override
 		public void onRelease(MouseEvent event) {
+
+		}
+
+		/* (non-Javadoc)
+		 * @see framework.objects.CanvasObject#erase()
+		 */
+		@Override
+		protected void erase() {
 
 		}
 

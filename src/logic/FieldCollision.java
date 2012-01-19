@@ -17,14 +17,16 @@
  * File: FieldCollision.java
  * Type: logic.FieldCollision
  * 
- * Documentation created: 18.01.2012 - 19:33:39 by Hans
+ * Documentation created: 18.01.2012 - 21:23:36 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import objects.BaseObject;
+import objects.BaseObject.FramedRect;
 
 /**
  * The Class FieldCollision.
@@ -51,6 +53,7 @@ public class FieldCollision {
 	 */
 	private FieldCollision() {
 		gameArray = new int[GAME_WIDTH][GAME_HEIGHT];
+		graphicsArray = new FramedRect[GAME_WIDTH][GAME_HEIGHT];
 	}
 
 	/** The Constant GAME_WIDTH. */
@@ -59,8 +62,12 @@ public class FieldCollision {
 	/** The Constant GAME_HEIGHT. */
 	public static final int GAME_HEIGHT = 30;
 
+	public static final int GAME_OVER_LINE = 4;
+
 	/** The game array. */
 	private int[][] gameArray;
+
+	private FramedRect[][] graphicsArray;
 
 	/**
 	 * Sets the collision field x,y pair to a given value.
@@ -92,6 +99,15 @@ public class FieldCollision {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	/**
+	 * Resets the game field array.
+	 */
+	void resetField() {
+		gameArray = new int[GAME_WIDTH][GAME_HEIGHT];
+		// TODO: dispose all Rects in the graphics array
+		graphicsArray = new FramedRect[GAME_WIDTH][GAME_HEIGHT];
 	}
 
 	// ========================================================================
@@ -176,6 +192,15 @@ public class FieldCollision {
 				}
 			}
 		}
+
+		FramedRect[] inactiveSubBlocks = obj.makeInactive();
+		int i = 0;
+
+		for (FramedRect f : inactiveSubBlocks) {
+			p = obj.getSubBlockPosition(i++);
+			graphicsArray[p.x][p.y] = f;
+			f.setArrayCoord(p.x, p.y);
+		}
 	}
 
 	// ========================================================================
@@ -184,13 +209,14 @@ public class FieldCollision {
 
 	/**
 	 * Checks the lines of the game-field and removes full lines from the array.
-	 *
+	 * 
 	 * @return the number of removed lines
 	 */
-	int checkLines() {
+	void checkLines() {
 
 		boolean lineFull = false;
-		boolean[] linesFull = new boolean[GAME_HEIGHT];
+		ArrayList<Integer> linesFull = new ArrayList<Integer>();
+		// int[] linesFull = new int[4];
 
 		int linesRemoved = 0;
 		int linesFilled = 0;
@@ -205,21 +231,53 @@ public class FieldCollision {
 				}
 			}
 			if (lineFull) {
-				linesFull[j] = true;
+				linesFull.add(linesFilled, j);
 				linesFilled++;
 			}
 		}
-		
+
 		linesRemoved = linesFilled;
 
-		for (; linesFilled > 0; linesFilled--) {
-			for (int j = GAME_HEIGHT - 1; j >= GAME_HEIGHT - linesFilled - 1; j--) {
+		for (int j : linesFull) {
+			for (int i = 0; i < GAME_WIDTH; i++) {
+				gameArray[i][j] = 0;
+				graphicsArray[i][j].makeInvisible();
+				graphicsArray[i][j].dispose();
+				graphicsArray[i][j] = null;
+			}
+		}
+
+		for (linesFilled = 0; linesFilled < linesRemoved; linesFilled++) {
+			for (int j = linesFull.get(linesFilled) + linesFilled; j >= GAME_OVER_LINE; j--) {
 				for (int i = 0; (i < GAME_WIDTH && j > 0 && j < GAME_HEIGHT); i++) {
 					gameArray[i][j] = gameArray[i][j - 1];
 					gameArray[i][j - 1] = 0;
+					if (graphicsArray[i][j - 1] != null) {
+						graphicsArray[i][j] = graphicsArray[i][j - 1];
+						graphicsArray[i][j].setArrayCoord(i, j);
+						graphicsArray[i][j].setPosition(0, 0);
+						graphicsArray[i][j - 1] = null;
+					}
 				}
 			}
+			@SuppressWarnings("unused")
+			int k = 0;
 		}
-		return linesRemoved;
 	}
+
+	// ========================================================================
+	// Loose Condition
+	// ========================================================================
+
+	boolean isGameOver() {
+
+		for (int i = 0; i < GAME_WIDTH; i++) {
+			if (gameArray[i][GAME_OVER_LINE] == 1) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }
