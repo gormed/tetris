@@ -18,7 +18,7 @@
  * File: TetrisGame.java
  * Type: core.TetrisGame
  * 
- * Documentation created: 18.01.2012 - 16:50:21 by Hans
+ * Documentation created: 19.01.2012 - 16:10:33 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -31,7 +31,6 @@ import logic.GameScore;
 import logic.GameStepper;
 import framework.core.Application;
 import framework.events.WindowControl;
-import framework.objects.Text;
 import gui.Score;
 
 import gui.InfoBackground;
@@ -48,11 +47,12 @@ public class TetrisGame {
 	private static GameScore score;
 	
 	/** The gui score. */
+	@SuppressWarnings("unused")
 	private static Score guiScore;
 	
+	/** The gui info background. */
+	@SuppressWarnings("unused")
 	private static InfoBackground guiInfoBackground;
-	
-	public static Text pauseLabel;
 
 	/**
 	 * The main method.
@@ -167,9 +167,7 @@ public class TetrisGame {
 		Font f = new Font("Tahoma", Font.BOLD, 14);
 		guiInfoBackground = new InfoBackground(239,0,"resource/tetrisscore.png");
 		guiScore = new Score(score, f);
-		
 
-		
 		stepper.start();
 		
 	}

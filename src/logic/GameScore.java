@@ -17,7 +17,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 19.01.2012 - 15:32:13 by Hans
+ * Documentation created: 19.01.2012 - 16:09:59 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -29,13 +29,16 @@ import gui.Score;
  */
 public class GameScore {
 
+	/** The Constant BLOCK_SCORE. */
 	private static final int BLOCK_SCORE = 5;
 	
-	
+	/** The Constant MAX_TIME. */
 	private static final int MAX_TIME = 30;
 	
+	/** The Constant POINTS_PER_LINE. */
 	private static final int POINTS_PER_LINE = 250;
 	
+	/** The Constant LINE_MULTIPLICATOR. */
 	private static final int LINE_MULTIPLICATOR = 2;
 
 	/** The instance. */
@@ -151,9 +154,18 @@ public class GameScore {
 		if (i > 4 || i < 1)
 			return;
 		else {
-			lastSubScore = 250 + 250 * LINE_MULTIPLICATOR * (i-1);
+			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1);
 			calculateScore();
 		}
+	}
+	
+	/**
+	 * Resets the game score.
+	 */
+	void resetGameScore() {
+		lastSubScore = 0;
+		totalScore = 0;
+		scoreLabel.refreshScore();
 	}
 
 }

@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.Image;
-
 import framework.objects.Picture;
 public class InfoBackground extends Picture{
 

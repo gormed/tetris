@@ -17,13 +17,11 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 18.01.2012 - 23:08:28 by Hans
+ * Documentation created: 19.01.2012 - 16:01:44 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -33,15 +31,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-import core.TetrisGame;
-
 import objects.BaseObject;
-import objects.BlockType;
 import framework.core.Application;
 import framework.core.TimedEvent;
 import framework.events.KeyboardControl;
 import framework.events.TimedControl;
-import framework.objects.Text;
+import gui.GameOver;
+import gui.Pause;
 
 /**
  * The Class GameStepper.
@@ -71,7 +67,12 @@ public class GameStepper implements TimedControl {
 	/** The inactive blocks. */
 	private ArrayList<BaseObject> inactiveBlocks;
 	
+	/** The block points time to calculate score. */
 	private int blockPointsTime = 0;
+	
+	private GameOver gameOverGUI;
+	
+	private Pause pauseGUI;
 
 	/**
 	 * Gets the single instance of GameStepper.
@@ -93,12 +94,16 @@ public class GameStepper implements TimedControl {
 		inactiveBlocks = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 		collision = FieldCollision.getInstance();
+		
+		pauseGUI = new Pause();
+		gameOverGUI = new GameOver();
 	}
 
 	/**
 	 * Start.
 	 */
 	public void start() {
+		GameScore.getInstance().resetGameScore();
 		generateNextBlock();
 		setCurrentBlock(nextMainBlock);
 		generateNextBlock();
@@ -123,8 +128,7 @@ public class GameStepper implements TimedControl {
 	 */
 	private void generateNextBlock() {
 		Random r = new Random(System.currentTimeMillis());
-		int random = Math.abs(r.nextInt()) % 7; // TODO: Change 2 into 7, this
-												// is the number of block-types
+		int random = Math.abs(r.nextInt()) % 7;
 
 		switch (random) {
 		case 0:
@@ -152,7 +156,6 @@ public class GameStepper implements TimedControl {
 			nextMainBlock = new objects.Square();
 			break;
 		}
-		nextMainBlock.setPosition(14, 8);
 	}
 
 	/*
@@ -187,6 +190,8 @@ public class GameStepper implements TimedControl {
 			generateNextBlock();
 			// check if a line is filled
 			checkLines();
+		} else {
+			gameOver();
 		}
 	}
 
@@ -272,6 +277,41 @@ public class GameStepper implements TimedControl {
 		}
 		return false;
 	}
+	
+	/**
+	 * Game over gui.
+	 */
+	private void gameOver() {
+		Application.getInstance().removeKeyboardControl(blockStepper);
+		Application.getInstance().removeTimedObject(blockStepper);
+		Application.getInstance().removeTimedObject(this);
+		
+		gameOverGUI.makeVisible();
+		
+		Application.getInstance().addKeyboardControl(new KeyboardControl() {
+			
+			@Override
+			public void keyPressed(KeyEvent event) {
+				//If enter is pressed, the game restarts
+				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+					gameOverGUI.makeInvisible();
+					Application.getInstance().removeKeyboardControl(this);
+					addControls();
+					start();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent event) {
+
+			}
+
+			@Override
+			public void keyTyped(KeyEvent event) {
+
+			}
+		});
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -289,16 +329,14 @@ public class GameStepper implements TimedControl {
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
 		
-		if (TetrisGame.pauseLabel == null)
-			TetrisGame.pauseLabel = new Text(6 * 20, 15 * 20, "PAUSE", new Font("Tahoma", Font.BOLD, 26), Color.BLACK);
-		TetrisGame.pauseLabel.makeVisible();
+		pauseGUI.makeVisible();
 		
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
 			
 			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.getKeyCode() == KeyEvent.VK_P) {
-					TetrisGame.pauseLabel.makeInvisible();
+					pauseGUI.makeInvisible();
 					Application.getInstance().removeKeyboardControl(this);
 					addControls();
 				//Application.getInstance().resume();
