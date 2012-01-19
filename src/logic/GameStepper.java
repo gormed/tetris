@@ -17,7 +17,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 19.01.2012 - 18:12:28 by Hans
+ * Documentation created: 19.01.2012 - 18:54:41 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -52,6 +52,7 @@ public class GameStepper implements TimedControl {
 	/** The Constant GAME_LEVEL for the timed event period, this is the game-speed. */
 	static final int[] GAME_LEVEL = { 800, 700, 600, 500, 400, 300, 200, 150, 100, 50 };
 	
+	/** The Constant MAX_LEVEL. */
 	static final int MAX_LEVEL = 9;
 	
 	/** The Constant LINES_FOR_NEXT_LEVEL indicates the lines to be removed for the next level. */
@@ -87,13 +88,20 @@ public class GameStepper implements TimedControl {
 	/** The pause gui. */
 	private Pause pauseGUI;
 	
+	/** The start game gui. */
 	private StartGame startGameGUI;
 
 	/** The game over flag. */
 	private boolean gameOverFlag = true;
 	
+	/** The game paused flag. */
+	@SuppressWarnings("unused")
+	private boolean gamePausedFlag = false;
+	
+	/** The current level. */
 	private int currentLevel = 0;
 	
+	/** The level label. */
 	private Level levelLabel;
 
 	/**
@@ -195,6 +203,25 @@ public class GameStepper implements TimedControl {
 			blockPointsTime++;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see framework.events.TimedControl#getPeriod()
+	 */
+	@Override
+	public long getPeriod() {
+		return period;
+	}
+	
+	/**
+	 * Gets the current level.
+	 *
+	 * @return the level
+	 */
+	public int getLevel() {
+		return currentLevel;
+	}
 	
 	/**
 	 * Sets the level period.
@@ -218,12 +245,17 @@ public class GameStepper implements TimedControl {
 		}
 	}
 	
+	/**
+	 * Sets the level label.
+	 *
+	 * @param levelLabel the new level label
+	 */
 	public void setLevelLabel(Level levelLabel) {
 		this.levelLabel = levelLabel;
 	}
 	
 	/**
-	 * This method is called if a block gets unmovable or inactive.
+	 * This method is called if a block gets unmove-able or inactive.
 	 */
 	private void onBlockInactive() {
 		// add current block to inactives
@@ -404,25 +436,17 @@ public class GameStepper implements TimedControl {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see framework.events.TimedControl#getPeriod()
-	 */
-	@Override
-	public long getPeriod() {
-		return period;
-	}
-
 	/**
 	 * Pause.
 	 */
 	public void pause() {
+		if (gameOverFlag)
+			return;
 		// Application.getInstance().pause();
 		Application.getInstance().removeKeyboardControl(blockStepper);
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
-
+		gamePausedFlag = true;
 		pauseGUI.makeVisible();
 
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
@@ -433,6 +457,7 @@ public class GameStepper implements TimedControl {
 					pauseGUI.makeInvisible();
 					Application.getInstance().removeKeyboardControl(this);
 					addControls();
+					gamePausedFlag = false;
 					// Application.getInstance().resume();
 				}
 			}

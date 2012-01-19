@@ -36,7 +36,7 @@ public class GameScore {
 	private static final int MAX_TIME = 30;
 	
 	/** The Constant POINTS_PER_LINE. */
-	private static final int POINTS_PER_LINE = 250;
+	private static final int POINTS_PER_LINE = 150;
 	
 	/** The Constant LINE_MULTIPLICATOR. */
 	private static final int LINE_MULTIPLICATOR = 2;
@@ -157,7 +157,8 @@ public class GameScore {
 		if (i > 4 || i < 1)
 			return;
 		else {
-			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1);
+			int level = GameStepper.getInstance().getLevel();
+			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1) * level;
 			calculateScore();
 			MusicPlayer.getInstance().playSound(i);
 			totalLinesRemoved += i;
