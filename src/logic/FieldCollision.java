@@ -280,7 +280,7 @@ public class FieldCollision {
 
 		for (int i = 0; i < GAME_WIDTH; i++) {
 			if (gameArray[i][GAME_OVER_LINE] == 1) {
-				MusicPlayer.getInstance().playSound(MusicPlayer.GAMEOVER);
+				MusicPlayer.getInstance().playSound(MusicPlayer.GAMEOVER, 0.0f);
 				return true;
 			}
 		}

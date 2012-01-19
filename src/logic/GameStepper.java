@@ -159,6 +159,7 @@ public class GameStepper implements TimedControl {
 	 */
 	private void generateNextBlock() {
 		Random r = new Random(System.currentTimeMillis());
+
 		int random = Math.abs(r.nextInt()) % 7;
 
 		switch (random) {
@@ -241,7 +242,7 @@ public class GameStepper implements TimedControl {
 		if (currentLevel < MAX_LEVEL && totalLines >= LINES_FOR_NEXT_LEVEL[currentLevel]) {
 			setLevelPeriod(++currentLevel);
 			levelLabel.setLevel(currentLevel);
-			MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP);
+			MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP, 0.0f);
 		}
 	}
 	
@@ -293,6 +294,7 @@ public class GameStepper implements TimedControl {
 	private void checkMainBlockCollisionVertical(Point desired) {
 		if (currentMainBlock.checkCollision(collision, desired) == 1) {
 			// a block is at the bottom or on some other brick
+			MusicPlayer.getInstance().playSound(MusicPlayer.DOWN, 0.0f);
 			onBlockInactive();
 		} else {
 			// the block can move to the next y-pos
@@ -312,6 +314,7 @@ public class GameStepper implements TimedControl {
 		if (checkValue == 1 || checkValue == 2) {
 
 		} else {
+			MusicPlayer.getInstance().playSound(MusicPlayer.TURN, 0.0f);
 			currentMainBlock.rotate();
 
 		}
@@ -328,6 +331,7 @@ public class GameStepper implements TimedControl {
 		if (checkValue == 1 || checkValue == 2) {
 
 		} else {
+			MusicPlayer.getInstance().playSound(MusicPlayer.MOVE, -10.0f);
 			currentMainBlock.setPosition(desired.x, desired.y);
 		}
 	}
@@ -411,16 +415,21 @@ public class GameStepper implements TimedControl {
 					levelLabel.setLevel(currentLevel);
 					setLevelPeriod(currentLevel);
 					addControls();
+					MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP, 0.0f);
 					start();
 					Application.getInstance().removeKeyboardControl(this);
 				}
 				if (event.getKeyCode() == KeyEvent.VK_UP) {
-					if (currentLevel < MAX_LEVEL)
+					if (currentLevel < MAX_LEVEL){
+						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE, -10.0f);
 						startGameGUI.changeDisplay(++currentLevel);
+					}
 				}
 				if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (currentLevel > 0)
+					if (currentLevel > 0){
+						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE, -10.0f);
 						startGameGUI.changeDisplay(--currentLevel);
+					}
 				}
 			}
 
@@ -446,6 +455,7 @@ public class GameStepper implements TimedControl {
 		Application.getInstance().removeKeyboardControl(blockStepper);
 		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
+		MusicPlayer.getInstance().stopBGSound();
 		gamePausedFlag = true;
 		pauseGUI.makeVisible();
 
@@ -457,6 +467,7 @@ public class GameStepper implements TimedControl {
 					pauseGUI.makeInvisible();
 					Application.getInstance().removeKeyboardControl(this);
 					addControls();
+					MusicPlayer.getInstance().startBGSound();
 					gamePausedFlag = false;
 					// Application.getInstance().resume();
 				}
@@ -611,8 +622,9 @@ public class GameStepper implements TimedControl {
 
 		/**
 		 * Move.
-		 *
-		 * @param event the event
+		 * 
+		 * @param event
+		 *            the event
 		 */
 		private void move(KeyEvent event) {
 			// arrow left is pressed
@@ -646,8 +658,9 @@ public class GameStepper implements TimedControl {
 		 */
 		/**
 		 * Key pressed.
-		 *
-		 * @param event the event
+		 * 
+		 * @param event
+		 *            the event
 		 */
 		@Override
 		public void keyPressed(KeyEvent event) {
@@ -662,8 +675,9 @@ public class GameStepper implements TimedControl {
 		 */
 		/**
 		 * Key released.
-		 *
-		 * @param event the event
+		 * 
+		 * @param event
+		 *            the event
 		 */
 		@Override
 		public void keyReleased(KeyEvent event) {
@@ -679,8 +693,9 @@ public class GameStepper implements TimedControl {
 		 */
 		/**
 		 * Key typed.
-		 *
-		 * @param event the event
+		 * 
+		 * @param event
+		 *            the event
 		 */
 		@Override
 		public void keyTyped(KeyEvent event) {
@@ -695,8 +710,9 @@ public class GameStepper implements TimedControl {
 		 */
 		/**
 		 * On timed event.
-		 *
-		 * @param t the t
+		 * 
+		 * @param t
+		 *            the t
 		 */
 		@Override
 		public void onTimedEvent(TimedEvent t) {
@@ -733,7 +749,7 @@ public class GameStepper implements TimedControl {
 		 */
 		/**
 		 * Gets the period.
-		 *
+		 * 
 		 * @return the period
 		 */
 		@Override

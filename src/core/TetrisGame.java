@@ -176,7 +176,7 @@ public class TetrisGame {
 		guiInfoBackground = new InfoBackground(239,0,"resource/tetrisscore.png");
 		guiScore = new Score(score);
 		guiLevel = new Level();
-		
+		MusicPlayer.getInstance().playBackgroundSound();
 		stepper.startGame();
 		
 	}

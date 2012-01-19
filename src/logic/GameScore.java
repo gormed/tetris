@@ -160,7 +160,7 @@ public class GameScore {
 			int level = GameStepper.getInstance().getLevel();
 			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1) * level;
 			calculateScore();
-			MusicPlayer.getInstance().playSound(i);
+			MusicPlayer.getInstance().playSound(i, 0.0f);
 			totalLinesRemoved += i;
 		}
 	}
