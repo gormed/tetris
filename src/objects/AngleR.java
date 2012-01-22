@@ -129,10 +129,11 @@ public class AngleR extends BaseObject {
 			newRaster[2][2] = true;
 			break;
 		case 3:
-			tempRaster[1][2] = true;
-			tempRaster[2][0] = true;
-			tempRaster[2][1] = true;
-			tempRaster[2][2] = true;
+			// TODO: hier stand tempRaster nicht newRaster, das war der bug ;)
+			newRaster[1][2] = true;
+			newRaster[2][0] = true;
+			newRaster[2][1] = true;
+			newRaster[2][2] = true;
 			break;
 		}
 		tempRaster = newRaster;

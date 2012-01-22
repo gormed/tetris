@@ -43,6 +43,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import logic.FieldCollision;
+import framework.core.Application;
 import framework.core.Time;
 import framework.core.UpdateObject;
 import framework.objects.CanvasObject;
@@ -83,10 +84,10 @@ abstract public class BaseObject extends UpdateObject {
 		baseBlocks = new FramedRect[4];
 		position = new Point(14, 8);
 	}
-	
+
 	/**
 	 * Make inactive.
-	 *
+	 * 
 	 * @return the framed rect[]
 	 */
 	public FramedRect[] makeInactive() {
@@ -189,8 +190,9 @@ abstract public class BaseObject extends UpdateObject {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				if (raster[i][j] == true) {
-					blocks[i][j] = new FramedRect(position.x * 20 + i * 20,position.y * 20 + j * 20, 20, 3,
-							Color.BLUE, Color.CYAN, new Point(i, j));
+					blocks[i][j] = new FramedRect(position.x * 20 + i * 20,
+							position.y * 20 + j * 20, 20, 3, Color.BLUE,
+							Color.CYAN, new Point(i, j));
 					blocks[i][j].makeVisible();
 					baseBlocks[n++] = blocks[i][j];
 				}
@@ -238,25 +240,22 @@ abstract public class BaseObject extends UpdateObject {
 	 *            the inner
 	 */
 	public void changeColor(Color border, Color inner) {
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				if (raster[i][j] == true) {
-					blocks[i][j].outer.changeColor(border);
-					blocks[i][j].inner.changeColor(inner);
-				}
+		for (FramedRect fr : baseBlocks) {
+			if (fr != null) {
+				fr.outer.changeColor(border);
+				fr.inner.changeColor(inner);
 			}
 		}
+
 	}
 
 	/**
 	 * Sets the block positions.
 	 */
 	protected void setBlockPositions() {
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				if (raster[i][j] == true) {
-					blocks[i][j].setPosition(position.x * 20, position.y * 20);
-				}
+		for (FramedRect fr : baseBlocks) {
+			if (fr != null) {
+				fr.setPosition(position.x * 20, position.y * 20);
 			}
 		}
 	}
@@ -273,9 +272,11 @@ abstract public class BaseObject extends UpdateObject {
 
 	/**
 	 * Checks the blocks collision.
-	 *
-	 * @param collision the collision
-	 * @param position the position
+	 * 
+	 * @param collision
+	 *            the collision
+	 * @param position
+	 *            the position
 	 * @return true, if colliding
 	 */
 	public int checkCollision(FieldCollision collision, Point position) {
@@ -285,9 +286,11 @@ abstract public class BaseObject extends UpdateObject {
 
 	/**
 	 * Checks the blocks collision by rotate.
-	 *
-	 * @param collision the collision
-	 * @param position the position
+	 * 
+	 * @param collision
+	 *            the collision
+	 * @param position
+	 *            the position
 	 * @return true, if colliding
 	 */
 	public int checkCollisionRotate(FieldCollision collision, Point position) {
@@ -347,6 +350,7 @@ abstract public class BaseObject extends UpdateObject {
 			this.inner = new Square(xPos + border, yPos + border, size
 					- (2 * border), inner);
 			makeVisible();
+			Application.getInstance().removeUpdateObject(this);
 		}
 
 		/*
@@ -376,16 +380,20 @@ abstract public class BaseObject extends UpdateObject {
 
 		/**
 		 * Sets the array coord.
-		 *
-		 * @param x the x
-		 * @param y the y
+		 * 
+		 * @param x
+		 *            the x
+		 * @param y
+		 *            the y
 		 */
 		public void setArrayCoord(int x, int y) {
 			arrayX = x;
 			arrayY = y;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see framework.objects.CanvasObject#makeVisible()
 		 */
 		@Override
@@ -395,7 +403,9 @@ abstract public class BaseObject extends UpdateObject {
 			super.makeVisible();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see framework.objects.CanvasObject#makeInvisible()
 		 */
 		@Override
@@ -405,7 +415,9 @@ abstract public class BaseObject extends UpdateObject {
 			super.makeInvisible();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see framework.core.UpdateObject#dispose()
 		 */
 		@Override
@@ -445,7 +457,9 @@ abstract public class BaseObject extends UpdateObject {
 
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see framework.objects.CanvasObject#erase()
 		 */
 		@Override
