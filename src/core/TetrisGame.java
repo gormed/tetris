@@ -3,14 +3,30 @@
  * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
  * 
- * Tetris is a tetris clone in java using the JIT Framework
+ * Tetris is a tetris clone in java using the JIT Framework.
+ * The project was created for educational purposes and may be used under the GNU 
+ * Public license only.
+ *
+ * If you modify it please let other people have part of it!
+ *
  * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * GNU Public License
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 
- * Tetris rights are by its owners/creators 
- * (Hans Ferchland & Hady Khalifa). You have no right to 
- * publish and/or deliver the code or application in any way!
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License 3 as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
- * If that is done by someone, please report it!
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 
  * Email us: hans.ferchland@gmx.de
  * 
@@ -18,7 +34,7 @@
  * File: TetrisGame.java
  * Type: core.TetrisGame
  * 
- * Documentation created: 19.01.2012 - 18:03:42 by Hans
+ * Documentation created: 22.01.2012 - 18:24:17 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -55,6 +71,7 @@ public class TetrisGame {
 	@SuppressWarnings("unused")
 	private static Score guiScore;
 	
+	/** The gui level. */
 	@SuppressWarnings("unused")
 	private static Level guiLevel;
 	
