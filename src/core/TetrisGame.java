@@ -86,6 +86,7 @@ public class TetrisGame {
 	 */
 	public static void main(String[] args) {
 		Application app = Application.getInstance();
+		app.initialize(null);
 		
 		app.addWindowControl(new WindowControl() {
 
@@ -146,8 +147,11 @@ public class TetrisGame {
 			 */
 			@Override
 			public void windowClosing(WindowEvent event) {
-				if (Application.getInstance().isRunning())
+				if (Application.getInstance().isRunning()) {
 					Application.getInstance().terminate();
+					MusicPlayer.getInstance().terminate();
+				}
+					
 			}
 
 			/*

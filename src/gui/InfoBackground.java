@@ -38,6 +38,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
 
+import framework.core.Application;
 import framework.objects.Picture;
 
 /**
@@ -54,6 +55,7 @@ public class InfoBackground extends Picture{
 	 */
 	public InfoBackground(int xPos, int yPos,String imagePath) {
 		super(xPos,yPos,imagePath);
+		Application.getInstance().removeUpdateObject(this);
 		this.makeVisible();
 	}
 

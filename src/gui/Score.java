@@ -43,6 +43,7 @@ import java.awt.Font;
 
 import logic.GameScore;
 
+import framework.core.Application;
 import framework.objects.Text;
 
 /**
@@ -87,6 +88,9 @@ public class Score {
 
 		subScoreLabel = new Text(XPOS, YPOS + 30, "", FONT, Color.DARK_GRAY);
 		subScoreLabel.makeVisible();
+		
+		Application.getInstance().removeUpdateObject(scoreLabel);
+		Application.getInstance().removeUpdateObject(subScoreLabel);
 	}
 
 	/**

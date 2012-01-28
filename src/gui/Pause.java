@@ -41,6 +41,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Font;
 
+import framework.core.Application;
 import framework.objects.Text;
 
 /**
@@ -65,6 +66,7 @@ public class Pause {
 	 */
 	public Pause() {
 		pauseLabel = new Text(XPOS, YPOS, "PAUSE", FONT, Color.BLACK);
+		Application.getInstance().removeUpdateObject(pauseLabel);
 	}
 
 	/**

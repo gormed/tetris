@@ -33,7 +33,7 @@
  * File: Level.java
  * Type: gui.Level
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 28.01.2012 - 20:27:59 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
@@ -43,42 +43,68 @@ import java.awt.Font;
 
 import logic.GameStepper;
 
+import framework.core.Application;
 import framework.objects.Text;
 
 /**
  * The Class Level.
  */
 public class Level {
-	
+
 	/** The Constant XPOS. */
 	static final int XPOS = 310;
 
 	/** The Constant YPOS. */
-	static final int YPOS = 482;
-	
+	static final int YPOS = 475;
+
 	/** The Constant FONT. */
 	static final Font FONT = new Font("Tahoma", Font.BOLD, 28);
-	
+
 	/** The level label. */
 	private Text levelLabel;
+
+	/** The lines label. */
+	private Text linesLabel;
+
+	/** The lines. */
+	private String lines = "Lines: ";
 
 	/**
 	 * Instantiates a new level.
 	 */
 	public Level() {
 		levelLabel = new Text(XPOS, YPOS, "0", FONT, Color.black);
+		linesLabel = new Text(XPOS - 15, YPOS + 20, "", new Font("Tahoma",
+				Font.BOLD, 12), Color.black);
 		levelLabel.makeVisible();
-		
+		linesLabel.makeVisible();
+
 		GameStepper.getInstance().setLevelLabel(this);
+		Application.getInstance().removeUpdateObject(levelLabel);
+		Application.getInstance().removeUpdateObject(linesLabel);
 	}
-	
+
 	/**
 	 * Sets the level.
-	 *
-	 * @param level the new level
+	 * 
+	 * @param level
+	 *            the new level
 	 */
 	public void setLevel(int level) {
 		levelLabel.changeText("" + level);
+	}
+
+	/**
+	 * Sets the lines.
+	 * 
+	 * @param lines
+	 *            the new lines
+	 */
+	public void setLines(int lines, int currentLevel) {
+		String s = this.lines + lines + "/"
+				+ GameStepper.LINES_FOR_NEXT_LEVEL[currentLevel];
+		linesLabel.setPosition(XPOS - (s.length() * 4) / 2, YPOS + 20);
+		linesLabel.changeText(s);
 	}
 
 }

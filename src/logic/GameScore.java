@@ -33,7 +33,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 22.01.2012 - 18:24:17 by Hans
+ * Documentation created: 28.01.2012 - 20:21:55 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -200,4 +200,13 @@ public class GameScore {
 		scoreLabel.refreshScore();
 	}
 
+	/**
+	 * Preset game score.
+	 *
+	 * @param linesRemoved the lines removed
+	 */
+	void presetGameScore(int linesRemoved) {
+		totalLinesRemoved = linesRemoved;
+	}
+	
 }

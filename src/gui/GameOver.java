@@ -41,6 +41,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Font;
 
+import framework.core.Application;
 import framework.objects.Text;
 
 /**
@@ -69,6 +70,8 @@ public class GameOver {
 	public GameOver() {
 		gameOverLabel = new Text(XPOS, YPOS, "GAME OVER", FONT, Color.red);
 		retryLabel = new Text(30, YPOS + 40, "Press 'Enter' to try again!", new Font("Tahoma", Font.CENTER_BASELINE, 14), Color.black);
+		Application.getInstance().removeUpdateObject(gameOverLabel);
+		Application.getInstance().removeUpdateObject(retryLabel);
 	}
 	
 	/**

@@ -33,7 +33,7 @@
  * File: GameStepper.java
  * Type: logic.GameStepper
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 28.01.2012 - 20:17:51 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -63,16 +63,25 @@ import gui.StartGame;
 public class GameStepper implements TimedControl {
 
 	/** The Constant STANDARD_PERIOD. */
-	static final int STANDARD_PERIOD = 800;
-	
-	/** The Constant GAME_LEVEL for the timed event period, this is the game-speed. */
-	static final int[] GAME_LEVEL = { 800, 700, 600, 500, 400, 300, 200, 150, 100, 50 };
-	
+	public static final int STANDARD_PERIOD = 800;
+
+	/**
+	 * The Constant GAME_LEVEL for the timed event period, this is the
+	 * game-speed.
+	 */
+	public static final int[] GAME_LEVEL = { 800, 700, 600, 500, 400, 300, 200,
+			150, 100, 80, 60, 40 };
+
+	/**
+	 * The Constant LINES_FOR_NEXT_LEVEL indicates the lines to be removed for
+	 * the next level.
+	 */
+	public static final int[] LINES_FOR_NEXT_LEVEL = { 5, 10, 15, 25, 40, 55,
+			70, 90, 110, 115, 120, 130, 140 };
+
 	/** The Constant MAX_LEVEL. */
-	static final int MAX_LEVEL = 9;
-	
-	/** The Constant LINES_FOR_NEXT_LEVEL indicates the lines to be removed for the next level. */
-	static final int[] LINES_FOR_NEXT_LEVEL = { 5, 10, 15, 25, 40, 55, 70, 90, 110 };
+	public static final int MAX_LEVEL = (GAME_LEVEL.length < LINES_FOR_NEXT_LEVEL.length) ? GAME_LEVEL.length + 1
+			: LINES_FOR_NEXT_LEVEL.length + 1;
 
 	/** The instance. */
 	private static GameStepper instance;
@@ -103,20 +112,20 @@ public class GameStepper implements TimedControl {
 
 	/** The pause gui. */
 	private Pause pauseGUI;
-	
+
 	/** The start game gui. */
 	private StartGame startGameGUI;
 
 	/** The game over flag. */
 	private boolean gameOverFlag = true;
-	
+
 	/** The game paused flag. */
 	@SuppressWarnings("unused")
 	private boolean gamePausedFlag = false;
-	
+
 	/** The current level. */
 	private int currentLevel = 0;
-	
+
 	/** The level label. */
 	private Level levelLabel;
 
@@ -136,7 +145,7 @@ public class GameStepper implements TimedControl {
 	 * Instantiates a new game stepper.
 	 */
 	private GameStepper() {
-		
+
 		inactiveBlocks = new ArrayList<BaseObject>();
 		blockStepper = new CurrentBlockStepper();
 		collision = FieldCollision.getInstance();
@@ -230,47 +239,51 @@ public class GameStepper implements TimedControl {
 	public long getPeriod() {
 		return period;
 	}
-	
+
 	/**
 	 * Gets the current level.
-	 *
+	 * 
 	 * @return the level
 	 */
 	public int getLevel() {
 		return currentLevel;
 	}
-	
+
 	/**
 	 * Sets the level period.
-	 *
-	 * @param level the new level period
+	 * 
+	 * @param level
+	 *            the new level period
 	 */
 	private void setLevelPeriod(int level) {
 		period = GAME_LEVEL[currentLevel = level];
 	}
-	
+
 	/**
 	 * Checks the level lines.
-	 *
-	 * @param totalLines the total lines
+	 * 
+	 * @param totalLines
+	 *            the total lines
 	 */
 	private void checkLevelLines(int totalLines) {
-		if (currentLevel < MAX_LEVEL && totalLines >= LINES_FOR_NEXT_LEVEL[currentLevel]) {
+		if (currentLevel < MAX_LEVEL
+				&& totalLines >= LINES_FOR_NEXT_LEVEL[currentLevel]) {
 			setLevelPeriod(++currentLevel);
 			levelLabel.setLevel(currentLevel);
 			MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP, 0.0f);
 		}
 	}
-	
+
 	/**
 	 * Sets the level label.
-	 *
-	 * @param levelLabel the new level label
+	 * 
+	 * @param levelLabel
+	 *            the new level label
 	 */
 	public void setLevelLabel(Level levelLabel) {
 		this.levelLabel = levelLabel;
 	}
-	
+
 	/**
 	 * This method is called if a block gets unmove-able or inactive.
 	 */
@@ -298,7 +311,11 @@ public class GameStepper implements TimedControl {
 	 * Checks lines and sets all blocks on the new position.
 	 */
 	private void checkLines() {
-		GameScore.getInstance().linesRemoved(collision.checkLines());
+		int linesRemoved = collision.checkLines();
+		GameScore score = GameScore.getInstance();
+
+		score.linesRemoved(linesRemoved);
+		levelLabel.setLines(score.getTotalLinesRemoved(), currentLevel);
 	}
 
 	/**
@@ -361,7 +378,6 @@ public class GameStepper implements TimedControl {
 		if (collision.isGameOver()) {
 			gameOverFlag = true;
 			Application.getInstance().removeTimedObject(this);
-			Application.getInstance().removeTimedObject(blockStepper);
 			Application.getInstance().removeKeyboardControl(blockStepper);
 			collision.resetField();
 			for (BaseObject o : inactiveBlocks) {
@@ -395,8 +411,8 @@ public class GameStepper implements TimedControl {
 				// If enter is pressed, the game restarts
 				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 					gameOverGUI.makeInvisible();
-					//addControls();
-					//start();
+					// addControls();
+					// start();
 					startGame();
 					Application.getInstance().removeKeyboardControl(this);
 				}
@@ -413,14 +429,13 @@ public class GameStepper implements TimedControl {
 			}
 		});
 	}
-	
+
 	/**
 	 * Start game.
 	 */
 	public void startGame() {
 		startGameGUI.makeVisible();
-		
-		
+
 		Application.getInstance().addKeyboardControl(new KeyboardControl() {
 
 			@Override
@@ -431,19 +446,33 @@ public class GameStepper implements TimedControl {
 					levelLabel.setLevel(currentLevel);
 					setLevelPeriod(currentLevel);
 					addControls();
-					MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP, 0.0f);
+					
+					MusicPlayer.getInstance().playSound(MusicPlayer.LEVELUP,
+							0.0f);
+					
 					start();
+					
+					if (currentLevel > 0) {
+						GameScore.getInstance().presetGameScore(
+								LINES_FOR_NEXT_LEVEL[currentLevel - 1]);
+						levelLabel.setLines(
+								LINES_FOR_NEXT_LEVEL[currentLevel - 1],
+								currentLevel);
+					}
+					
 					Application.getInstance().removeKeyboardControl(this);
 				}
 				if (event.getKeyCode() == KeyEvent.VK_UP) {
-					if (currentLevel < MAX_LEVEL){
-						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE, -10.0f);
+					if (currentLevel < MAX_LEVEL) {
+						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE,
+								-10.0f);
 						startGameGUI.changeDisplay(++currentLevel);
 					}
 				}
 				if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (currentLevel > 0){
-						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE, -10.0f);
+					if (currentLevel > 0) {
+						MusicPlayer.getInstance().playSound(MusicPlayer.MOVE,
+								-10.0f);
 						startGameGUI.changeDisplay(--currentLevel);
 					}
 				}
@@ -467,10 +496,9 @@ public class GameStepper implements TimedControl {
 	public void pause() {
 		if (gameOverFlag)
 			return;
-		// Application.getInstance().pause();
+
 		MusicPlayer.getInstance().stopBGSound();
 		Application.getInstance().removeKeyboardControl(blockStepper);
-		Application.getInstance().removeTimedObject(blockStepper);
 		Application.getInstance().removeTimedObject(this);
 		gamePausedFlag = true;
 		pauseGUI.makeVisible();
@@ -485,7 +513,6 @@ public class GameStepper implements TimedControl {
 					addControls();
 					MusicPlayer.getInstance().startBGSound();
 					gamePausedFlag = false;
-					// Application.getInstance().resume();
 				}
 			}
 
@@ -499,13 +526,13 @@ public class GameStepper implements TimedControl {
 
 			}
 		});
+
 	}
 
 	/**
 	 * Adds the controls.
 	 */
 	private void addControls() {
-		Application.getInstance().addTimedObject(blockStepper);
 		Application.getInstance().addKeyboardControl(blockStepper);
 		Application.getInstance().addTimedObject(this);
 	}
@@ -513,7 +540,7 @@ public class GameStepper implements TimedControl {
 	/**
 	 * The Class CurrentBlockStepper.
 	 */
-	class CurrentBlockStepper implements TimedControl, KeyboardControl {
+	class CurrentBlockStepper implements KeyboardControl {
 
 		/** The key events. */
 		private Queue<KeyEvent> keyEvents;
@@ -636,51 +663,37 @@ public class GameStepper implements TimedControl {
 			};
 		}
 
-		/**
-		 * Move.
-		 * 
-		 * @param event
-		 *            the event
-		 */
-		private void move(KeyEvent event) {
-			// arrow left is pressed
-			if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-				keyEvents.add(event);
-			}
-			// arrow right is pressed
-			if (event.getKeyCode() == KeyEvent.VK_RIGHT) {
-				keyEvents.add(event);
-			}
-			// arrow down is pressed
-			if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-				keyEvents.add(event);
-			}
-			// arrow up is pressed
-			else if (event.getKeyCode() == KeyEvent.VK_UP) {
-				keyEvents.add(event);
-			}
-			// "P" is pressed
-			else if (event.getKeyCode() == KeyEvent.VK_P) {
-				keyEvents.clear();
-				keyEvents.add(event);
-			}
-		}
-
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see
 		 * framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
 		 */
-		/**
-		 * Key pressed.
-		 * 
-		 * @param event
-		 *            the event
-		 */
 		@Override
-		public void keyPressed(KeyEvent event) {
-			move(event);
+		public void keyPressed(KeyEvent e) {
+			// move(event);
+
+			Point p = currentMainBlock.getPosition();
+			// arrow left is pressed
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				checkMainBlockCollisionHorizontal(new Point(p.x - 1, p.y));
+			}
+			// arrow right is pressed
+			else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				checkMainBlockCollisionHorizontal(new Point(p.x + 1, p.y));
+			}
+			// arrow down is pressed
+			else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
+			}
+			// arrow up is pressed
+			else if (e.getKeyCode() == KeyEvent.VK_UP) {
+				checkMainBlockCollisionRotate(new Point(p.x, p.y));
+			}
+			// "P" is pressed
+			else if (e.getKeyCode() == KeyEvent.VK_P) {
+				pause();
+			}
 		}
 
 		/*
@@ -689,16 +702,8 @@ public class GameStepper implements TimedControl {
 		 * @see
 		 * framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
 		 */
-		/**
-		 * Key released.
-		 * 
-		 * @param event
-		 *            the event
-		 */
 		@Override
 		public void keyReleased(KeyEvent event) {
-			keyEvents.clear();
-			// move(event);
 		}
 
 		/*
@@ -707,71 +712,10 @@ public class GameStepper implements TimedControl {
 		 * @see
 		 * framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
 		 */
-		/**
-		 * Key typed.
-		 * 
-		 * @param event
-		 *            the event
-		 */
 		@Override
 		public void keyTyped(KeyEvent event) {
-
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * framework.events.TimedControl#onTimedEvent(framework.core.TimedEvent)
-		 */
-		/**
-		 * On timed event.
-		 * 
-		 * @param t
-		 *            the t
-		 */
-		@Override
-		public void onTimedEvent(TimedEvent t) {
-			if (!keyEvents.isEmpty()) {
-				KeyEvent e = keyEvents.poll();
-				Point p = currentMainBlock.getPosition();
-				// arrow left is pressed
-				if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					checkMainBlockCollisionHorizontal(new Point(p.x - 1, p.y));
-				}
-				// arrow right is pressed
-				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					checkMainBlockCollisionHorizontal(new Point(p.x + 1, p.y));
-				}
-				// arrow down is pressed
-				else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					checkMainBlockCollisionVertical(new Point(p.x, p.y + 1));
-				}
-				// arrow up is pressed
-				else if (e.getKeyCode() == KeyEvent.VK_UP) {
-					checkMainBlockCollisionRotate(new Point(p.x, p.y));
-				}
-				// "P" is pressed
-				else if (e.getKeyCode() == KeyEvent.VK_P) {
-					pause();
-				}
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see framework.events.TimedControl#getPeriod()
-		 */
-		/**
-		 * Gets the period.
-		 * 
-		 * @return the period
-		 */
-		@Override
-		public long getPeriod() {
-			return 50;
-		}
 	}
 
 }

@@ -41,6 +41,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Font;
 
+import framework.core.Application;
 import framework.objects.Picture;
 import framework.objects.Text;
 
@@ -69,7 +70,9 @@ public class StartGame {
 	 */
 	public StartGame() {
 		background = new Picture(XPOS, YPOS, "resource/startgame.png");
+		Application.getInstance().removeUpdateObject(background);
 		desiredLevelLabel = new Text(169, 345, "0", FONT, Color.black);
+		Application.getInstance().removeUpdateObject(desiredLevelLabel);
 	}
 	
 	/**
