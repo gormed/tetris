@@ -33,7 +33,7 @@
  * File: GameScore.java
  * Type: logic.GameScore
  * 
- * Documentation created: 28.01.2012 - 20:21:55 by Hans
+ * Documentation created: 29.01.2012 - 23:07:26 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -176,7 +176,7 @@ public class GameScore {
 			int level = GameStepper.getInstance().getLevel();
 			lastSubScore = POINTS_PER_LINE + POINTS_PER_LINE * LINE_MULTIPLICATOR * (i-1) * level;
 			calculateScore();
-			MusicPlayer.getInstance().playSound(i, 0.0f);
+			MusicPlayer.getInstance().playSound(i);
 			totalLinesRemoved += i;
 		}
 	}

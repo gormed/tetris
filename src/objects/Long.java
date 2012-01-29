@@ -33,7 +33,7 @@
  * File: Long.java
  * Type: objects.Long
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;

@@ -33,7 +33,7 @@
  * File: Level.java
  * Type: gui.Level
  * 
- * Documentation created: 28.01.2012 - 20:27:59 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
@@ -74,7 +74,7 @@ public class Level {
 	 */
 	public Level() {
 		levelLabel = new Text(XPOS, YPOS, "0", FONT, Color.black);
-		linesLabel = new Text(XPOS - 15, YPOS + 20, "", new Font("Tahoma",
+		linesLabel = new Text(XPOS, YPOS + 20, "", new Font("Tahoma",
 				Font.BOLD, 12), Color.black);
 		levelLabel.makeVisible();
 		linesLabel.makeVisible();
@@ -96,9 +96,9 @@ public class Level {
 
 	/**
 	 * Sets the lines.
-	 * 
-	 * @param lines
-	 *            the new lines
+	 *
+	 * @param lines the new lines
+	 * @param currentLevel the current level
 	 */
 	public void setLines(int lines, int currentLevel) {
 		String s = this.lines + lines + "/"
@@ -106,5 +106,14 @@ public class Level {
 		linesLabel.setPosition(XPOS - (s.length() * 4) / 2, YPOS + 20);
 		linesLabel.changeText(s);
 	}
-
+	
+	/**
+	 * Dispose.
+	 */
+	public void dispose() {
+		levelLabel.makeInvisible();
+		linesLabel.makeInvisible();
+		linesLabel.dispose();
+		levelLabel.dispose();
+	}
 }

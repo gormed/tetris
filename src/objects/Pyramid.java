@@ -33,7 +33,7 @@
  * File: Pyramid.java
  * Type: objects.Pyramid
  * 
- * Documentation created: 22.01.2012 - 18:24:17 by Hans
+ * Documentation created: 29.01.2012 - 23:07:26 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;

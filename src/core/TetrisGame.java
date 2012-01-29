@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Tetris Project (c) 2011 - 2012 by Hans Ferchland & Hady Khalifa
  * 
@@ -34,7 +33,7 @@
  * File: TetrisGame.java
  * Type: core.TetrisGame
  * 
- * Documentation created: 22.01.2012 - 18:24:17 by Hans
+ * Documentation created: 29.01.2012 - 23:07:26 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -53,41 +52,47 @@ import logic.GameStepper;
 import logic.MusicPlayer;
 
 /**
- * The Class TetrisGame.
+ * The Class <code>TetrisGame</code> is the main class for the game if running as a .jar file
+ * locally in a <code>JFrame</code>.
+ * <p>
+ * If the file is started locally only this class will act as the main class,
+ * but not <code>TetrisApplet</code>.
+ * </p>
  */
 public class TetrisGame {
-	
-	/** The stepper. */
+
+	/** The game stepper, main logic class. */
 	private static GameStepper stepper;
-	
-	/** The score. */
+
+	/** The score, score logic class. */
 	private static GameScore score;
-	
-	/** The player. */
+
+	/** The player for audio files. */
 	@SuppressWarnings("unused")
 	private static MusicPlayer player;
-	
-	/** The gui score. */
+
+	/** The gui for the score. */
 	@SuppressWarnings("unused")
 	private static Score guiScore;
-	
-	/** The gui level. */
+
+	/** The gui for the level. */
 	@SuppressWarnings("unused")
 	private static Level guiLevel;
-	
-	/** The gui info background. */
+
+	/** The gui for the background. */
 	@SuppressWarnings("unused")
 	private static InfoBackground guiInfoBackground;
 
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		Application app = Application.getInstance();
 		app.initialize(null);
-		
+
 		app.addWindowControl(new WindowControl() {
 
 			/*
@@ -151,7 +156,7 @@ public class TetrisGame {
 					Application.getInstance().terminate();
 					MusicPlayer.getInstance().terminate();
 				}
-					
+
 			}
 
 			/*
@@ -176,29 +181,28 @@ public class TetrisGame {
 				Application.getInstance().resume();
 			}
 		});
-		
+
 		app.setDimensions(400, 600);
 		app.setTitle("Tetris");
-		
+
+		loadContent();
+
+		app.start();
+	}
+
+	/**
+	 * Load content of the game.
+	 */
+	public static void loadContent() {
 		stepper = GameStepper.getInstance();
 		score = GameScore.getInstance();
 		player = MusicPlayer.getInstance();
-		
-		loadContent();
-		
-		app.start();
-	}
-	
-	/**
-	 * Load content.
-	 */
-	public static void loadContent() {
-
-		guiInfoBackground = new InfoBackground(239,0,"resource/tetrisscore.png");
+		guiInfoBackground = new InfoBackground(239, 0,
+				"resource/tetrisscore.png");
 		guiScore = new Score(score);
 		guiLevel = new Level();
-		MusicPlayer.getInstance().playBackgroundSound();
+		MusicPlayer.getInstance().playBackgroundSound(-10);
 		stepper.startGame();
-		
+
 	}
 }

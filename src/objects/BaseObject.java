@@ -33,7 +33,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -43,7 +43,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import logic.FieldCollision;
-import framework.core.Application;
 import framework.core.Time;
 import framework.core.UpdateObject;
 import framework.objects.CanvasObject;
@@ -350,7 +349,7 @@ abstract public class BaseObject extends UpdateObject {
 			this.inner = new Square(xPos + border, yPos + border, size
 					- (2 * border), inner);
 			makeVisible();
-			Application.getInstance().removeUpdateObject(this);
+			//Application.getInstance().removeUpdateObject(this);
 		}
 
 		/*

@@ -33,7 +33,7 @@
  * File: Score.java
  * Type: gui.Score
  * 
- * Documentation created: 22.01.2012 - 18:24:17 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
@@ -99,5 +99,16 @@ public class Score {
 	public void refreshScore() {
 		scoreLabel.changeText(String.valueOf(score.getGameScore()));
 		subScoreLabel.changeText("+" + String.valueOf(score.getSubScore()));
+	}
+	
+	/**
+	 * Dispose.
+	 */
+	public void dispose() {
+		score = null;
+		scoreLabel.makeInvisible();
+		scoreLabel.dispose();
+		subScoreLabel.makeInvisible();
+		subScoreLabel.dispose();
 	}
 }

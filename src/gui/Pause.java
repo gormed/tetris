@@ -33,7 +33,7 @@
  * File: Pause.java
  * Type: gui.Pause
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
@@ -81,6 +81,14 @@ public class Pause {
 	 */
 	public void makeInvisible() {
 		pauseLabel.makeInvisible();
+	}
+	
+	/**
+	 * Dispose.
+	 */
+	public void dispose() {
+		makeInvisible();
+		pauseLabel.dispose();
 	}
 
 }

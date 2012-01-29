@@ -33,7 +33,7 @@
  * File: InfoBackground.java
  * Type: gui.InfoBackground
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package gui;
@@ -57,6 +57,15 @@ public class InfoBackground extends Picture{
 		super(xPos,yPos,imagePath);
 		Application.getInstance().removeUpdateObject(this);
 		this.makeVisible();
+	}
+	
+	/* (non-Javadoc)
+	 * @see framework.objects.Picture#dispose()
+	 */
+	@Override
+	public boolean dispose() {
+		this.makeInvisible();
+		return super.dispose();
 	}
 
 }

@@ -33,7 +33,7 @@
  * File: MusicPlayer.java
  * Type: logic.MusicPlayer
  * 
- * Documentation created: 28.01.2012 - 14:38:47 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -52,13 +52,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import framework.core.Application;
 import framework.core.JITApplet;
-import framework.core.TimedEvent;
-import framework.events.TimedControl;
 
 /**
  * The Class MusicPlayer.
  */
-public class MusicPlayer implements TimedControl {
+public class MusicPlayer {
 
 	/** The instance. */
 	private static MusicPlayer instance;
@@ -87,10 +85,8 @@ public class MusicPlayer implements TimedControl {
 	/** The Constant TURN. */
 	static final int TURN = 9;
 
-	/** The back ground clip. */
-	private Clip backGroundClip;
-	
-	private ArrayList<Clip> runningClips;
+	/** The game sounds. */
+	private ArrayList<Clip> gameSounds;
 
 	/** The is applet flag. */
 	private boolean isApplet = false;
@@ -113,8 +109,8 @@ public class MusicPlayer implements TimedControl {
 	private MusicPlayer() {
 		files = new ArrayList<File>();
 		urls = new ArrayList<URL>();
-		runningClips = new ArrayList<Clip>();
-		
+		gameSounds = new ArrayList<Clip>();
+
 		JITApplet applet = Application.getInstance().getApplet();
 		if (applet != null) {
 			URL codebase = applet.getCodeBase();
@@ -142,7 +138,62 @@ public class MusicPlayer implements TimedControl {
 			addFile(TURN, "resource/media/turn.wav");
 			isApplet = false;
 		}
-		Application.getInstance().addTimedObject(this);
+		loadAllClips();
+	}
+
+	/**
+	 * Loads all clips.
+	 */
+	private void loadAllClips() {
+		loadClip(LEVELUP, 0);
+		loadClip(1, -5);
+		loadClip(2, -5);
+		loadClip(3, -5);
+		loadClip(4, -5);
+		loadClip(GAMEOVER, 0);
+		loadClip(BACKGROUND, -10);
+		loadClip(DOWN, -10);
+		loadClip(MOVE, -12);
+		loadClip(TURN, -5);
+	}
+
+	/**
+	 * Load a single clip.
+	 * 
+	 * @param id
+	 *            the id
+	 * @param volume
+	 *            the volume
+	 */
+	private void loadClip(int id, float volume) {
+		try {
+			AudioInputStream audioIn;
+			if (isApplet) {
+				audioIn = AudioSystem.getAudioInputStream(urls.get(id));
+			} else {
+				audioIn = AudioSystem.getAudioInputStream(files.get(id));
+			}
+
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioIn);
+			clip.getLevel();
+			FloatControl gainControl = (FloatControl) clip
+					.getControl(FloatControl.Type.MASTER_GAIN);
+			gainControl.setValue(volume);
+			gameSounds.add(id, clip);
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+			System.err
+					.println("A file-line could not be opened due to resource restrictions!");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("I/O error during reading of the stream!");
+		} catch (UnsupportedAudioFileException e) {
+			e.printStackTrace();
+			System.err.println("Error playing sound: " + id + "/"
+					+ urls.get(id) != null ? urls.get(id).toString()
+					: " URL not found!");
+		}
 	}
 
 	/**
@@ -183,114 +234,51 @@ public class MusicPlayer implements TimedControl {
 
 	/**
 	 * Play sound.
-	 * 
-	 * @param id
-	 *            the num of lines
-	 * @param volume
-	 *            the volume
+	 *
+	 * @param id the num of lines
 	 */
-	public void playSound(int id, float volume) {
-		try {
-			AudioInputStream audioIn;
-			if (isApplet) {
-				audioIn = AudioSystem.getAudioInputStream(urls.get(id));
-			} else {
-				audioIn = AudioSystem.getAudioInputStream(files.get(id));
-			}
-
-			Clip clip = AudioSystem.getClip();
-			clip.open(audioIn);
-			FloatControl gainControl = (FloatControl) clip
-					.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(volume);
-			clip.start();
-			runningClips.add(clip);
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-			System.err
-					.println("A file-line could not be opened due to resource restrictions!");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("I/O error during reading of the stream!");
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-			System.err.println("Error playing sound: " + id + "/"
-					+ urls.get(id) != null ? urls.get(id).toString()
-					: " URL not found!");
+	public void playSound(int id) {
+		Clip sound = gameSounds.get(id);
+		if (sound != null) {
+			sound.stop();
+			sound.setFramePosition(0);
+			sound.start();
 		}
-
 	}
 
 	/**
 	 * Play background sound.
+	 *
+	 * @param volume the volume
 	 */
-	public void playBackgroundSound() {
-		try {
-			AudioInputStream audioIn;
-			if (isApplet) {
-				audioIn = AudioSystem.getAudioInputStream(urls.get(BACKGROUND));
-			} else {
-				audioIn = AudioSystem
-						.getAudioInputStream(files.get(BACKGROUND));
-			}
-
-			backGroundClip = AudioSystem.getClip();
-			backGroundClip.open(audioIn);
-			// reduce volume
-			FloatControl gainControl = (FloatControl) backGroundClip
+	public void playBackgroundSound(float volume) {
+		Clip sound = gameSounds.get(BACKGROUND);
+		if (sound != null) {
+			FloatControl gainControl = (FloatControl) sound
 					.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(-10.0f);
-			backGroundClip.loop(42);
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-			System.err
-					.println("A file-line could not be opened due to resource restrictions!");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("I/O error during reading of the stream!");
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-			System.err.println("Error playing sound: " + BACKGROUND + "/"
-					+ urls.get(BACKGROUND) != null ? urls.get(BACKGROUND).toString()
-					: " URL not found!");
-		}
-	}
-
-	/**
-	 * Start bg sound.
-	 */
-	public void startBGSound() {
-		if (backGroundClip != null) {
-			FloatControl gainControl = (FloatControl) backGroundClip
-					.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(-10.0f);
-		} else {
-			System.err.println("No background clip to start!");
+			gainControl.setValue(volume);
+			sound.start();
+			sound.loop(42);
 		}
 	}
 
 	/**
 	 * Stop bg sound.
 	 */
-	public void stopBGSound() {
-		if (backGroundClip != null) {
-			FloatControl gainControl = (FloatControl) backGroundClip
-					.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(-30.0f);
-		} else {
-			System.err.println("No background clip to stop!");
+	public void stopBackgroundSound() {
+		Clip sound = gameSounds.get(BACKGROUND);
+		if (sound != null) {
+			sound.stop();
 		}
-
 	}
 
 	/**
-	 * Disposes the music player, all resources are freed and the instance is nulled.
+	 * Disposes the music player, all resources are freed and the instance is
+	 * nulled.
 	 */
 	public void terminate() {
-		Application.getInstance().removeTimedObject(this);
-		backGroundClip.close();
 		instance = null;
-		for (Clip c : runningClips) {
+		for (Clip c : gameSounds) {
 			try {
 				c.stop();
 				c.close();
@@ -298,45 +286,14 @@ public class MusicPlayer implements TimedControl {
 				e.printStackTrace();
 				System.err.println("Error closing clip!");
 			}
-			
-			
+
 		}
-		runningClips.clear();
-		runningClips = null;
+		gameSounds.clear();
+		gameSounds = null;
 		files.clear();
 		files = null;
 		urls.clear();
 		urls = null;
 	}
 
-	/**
-	 * On timed event.
-	 *
-	 * @param t the t
-	 */
-	@Override
-	public void onTimedEvent(TimedEvent t) {
-		@SuppressWarnings("unchecked")
-		ArrayList<Clip> clipsClone = (ArrayList<Clip>) runningClips.clone();
-		
-		for (Clip c : clipsClone) {
-			if (!c.isRunning()) {
-				c.stop();
-				c.close();
-				runningClips.remove(c);
-			}
-		}
-	}
-
-	/**
-	 * Gets the period.
-	 *
-	 * @return the period
-	 */
-	@Override
-	public long getPeriod() {
-		
-		return 2000;
-	}
-	
 }

@@ -33,7 +33,7 @@
  * File: FieldCollision.java
  * Type: logic.FieldCollision
  * 
- * Documentation created: 22.01.2012 - 18:24:16 by Hans
+ * Documentation created: 29.01.2012 - 23:07:25 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
@@ -87,6 +87,15 @@ public class FieldCollision {
 	/** The graphics array. */
 	private FramedRect[][] graphicsArray;
 
+	/**
+	 * Destroys the collision.
+	 */
+	void destroy() {
+		graphicsArray = null;
+		gameArray = null;
+		instance = null;
+	}
+	
 	/**
 	 * Sets the collision field x,y pair to a given value.
 	 * 
@@ -296,7 +305,7 @@ public class FieldCollision {
 
 		for (int i = 0; i < GAME_WIDTH; i++) {
 			if (gameArray[i][GAME_OVER_LINE] == 1) {
-				MusicPlayer.getInstance().playSound(MusicPlayer.GAMEOVER, 0.0f);
+				MusicPlayer.getInstance().playSound(MusicPlayer.GAMEOVER);
 				return true;
 			}
 		}
