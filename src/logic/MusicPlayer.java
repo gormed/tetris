@@ -176,7 +176,6 @@ public class MusicPlayer {
 
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioIn);
-			clip.getLevel();
 			FloatControl gainControl = (FloatControl) clip
 					.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(volume);
