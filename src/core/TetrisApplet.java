@@ -33,7 +33,7 @@
  * File: TetrisApplet.java
  * Type: core.TetrisApplet
  * 
- * Documentation created: 29.01.2012 - 23:07:24 by Hans
+ * Documentation created: 31.01.2012 - 23:23:23 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package core;
@@ -43,6 +43,7 @@ import java.awt.Font;
 
 import framework.core.Application;
 import framework.core.JITApplet;
+import framework.core.WorkerThread;
 import framework.objects.Text;
 import gui.InfoBackground;
 import gui.Level;
@@ -56,8 +57,8 @@ import logic.MusicPlayer;
  * The Class TetrisApplet is the main class if the game is running as an applet
  * in the browser.
  * <p>
- * If the applet is started in the browser only this class will act as the main class,
- * but not <code>TetrisGame</code>.
+ * If the applet is started in the browser only this class will act as the main
+ * class, but not <code>TetrisGame</code>.
  * </p>
  */
 public class TetrisApplet extends JITApplet {
@@ -86,6 +87,8 @@ public class TetrisApplet extends JITApplet {
 	/** The wait text at begin. */
 	private static Text wait;
 
+	private static String loadText = "Please wait while loading";
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,17 +99,16 @@ public class TetrisApplet extends JITApplet {
 		application = Application.getInstance();
 		application.initialize(this);
 
-		wait = new Text(100, 100, "Please wait while loading...", new Font(
-				"Tahoma", Font.BOLD, 12), Color.black);
+		wait = new Text(100, 100, loadText, new Font("Tahoma", Font.BOLD, 12),
+				Color.black);
 		wait.makeVisible();
 
-		loadContent();
+		application.addLoadingFunction(this, "loadContent");
 
-		stepper.startGame();
+		WorkerThread w = new WorkerThread(this, "animateLoad");
+		w.start();
 
 		application.start();
-		setVisible(true);
-		this.transferFocus();
 	}
 
 	/*
@@ -116,11 +118,6 @@ public class TetrisApplet extends JITApplet {
 	 */
 	@Override
 	public void start() {
-		if (wait != null) {
-			wait.makeInvisible();
-			wait.dispose();
-			wait = null;
-		}
 		super.start();
 	}
 
@@ -161,7 +158,7 @@ public class TetrisApplet extends JITApplet {
 	/**
 	 * Load content of the game.
 	 */
-	public static void loadContent() {
+	public void loadContent() {
 		stepper = GameStepper.getInstance();
 		score = GameScore.getInstance();
 		player = MusicPlayer.getInstance();
@@ -170,6 +167,35 @@ public class TetrisApplet extends JITApplet {
 		guiScore = new Score(score);
 		guiLevel = new Level();
 		MusicPlayer.getInstance().playBackgroundSound(-10);
+		stepper.startGame();
 
+		if (wait != null) {
+			wait.makeInvisible();
+			wait.dispose();
+			wait = null;
+		}
+	}
+
+	/**
+	 * Animates the loading screen.
+	 */
+	public void animateLoad() {
+		while (wait != null) {
+
+			for (String s = ""; s.length() < 4; s += ".") {
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					System.err
+							.println("Any thread has interrupted the current thread!");
+				}
+				if (wait != null)
+					wait.changeText(loadText + s);
+				else
+					break;
+			}
+
+		}
 	}
 }

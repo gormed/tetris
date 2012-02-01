@@ -45,8 +45,8 @@ import java.awt.event.MouseEvent;
 import logic.FieldCollision;
 import framework.core.Time;
 import framework.core.UpdateObject;
-import framework.objects.CanvasObject;
 import framework.objects.Square;
+import framework.objects.base.CanvasObject;
 
 /**
  * The Class BaseObject.

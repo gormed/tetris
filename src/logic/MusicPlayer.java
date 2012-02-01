@@ -33,11 +33,13 @@
  * File: MusicPlayer.java
  * Type: logic.MusicPlayer
  * 
- * Documentation created: 29.01.2012 - 23:07:25 by Hans
+ * Documentation created: 01.02.2012 - 00:05:49 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package logic;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -52,11 +54,14 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import framework.core.Application;
 import framework.core.JITApplet;
+import framework.core.Time;
+import framework.events.KeyboardControl;
+import framework.objects.base.AbstractPicture;
 
 /**
  * The Class MusicPlayer.
  */
-public class MusicPlayer {
+public class MusicPlayer implements KeyboardControl {
 
 	/** The instance. */
 	private static MusicPlayer instance;
@@ -91,6 +96,15 @@ public class MusicPlayer {
 	/** The is applet flag. */
 	private boolean isApplet = false;
 
+	/** The mute button. */
+	private AbstractPicture muteButton;
+
+	/** The unmute button. */
+	private AbstractPicture noMuteButton;
+
+	/** The global mute flag. */
+	private boolean globalMute = false;
+
 	/**
 	 * Gets the single instance of MusicPlayer.
 	 * 
@@ -110,6 +124,42 @@ public class MusicPlayer {
 		files = new ArrayList<File>();
 		urls = new ArrayList<URL>();
 		gameSounds = new ArrayList<Clip>();
+
+		muteButton = new AbstractPicture(5, 5, "resource/mute.png") {
+
+			@Override
+			public void update(Time time) {
+				Application.getInstance().removeUpdateObject(this);
+			}
+
+			@Override
+			public void onRelease(MouseEvent event) {
+				toggleMute();
+			}
+
+			@Override
+			public void onClick(MouseEvent event) {
+			}
+		};
+
+		noMuteButton = new AbstractPicture(5, 5, "resource/nomute.png") {
+
+			@Override
+			public void update(Time time) {
+				Application.getInstance().removeUpdateObject(this);
+			}
+
+			@Override
+			public void onRelease(MouseEvent event) {
+				toggleMute();
+			}
+
+			@Override
+			public void onClick(MouseEvent event) {
+			}
+		};
+		Application.getInstance().removeMouseControl(muteButton);
+		noMuteButton.makeVisible();
 
 		JITApplet applet = Application.getInstance().getApplet();
 		if (applet != null) {
@@ -139,6 +189,7 @@ public class MusicPlayer {
 			isApplet = false;
 		}
 		loadAllClips();
+		Application.getInstance().addKeyboardControl(this);
 	}
 
 	/**
@@ -233,31 +284,37 @@ public class MusicPlayer {
 
 	/**
 	 * Play sound.
-	 *
-	 * @param id the num of lines
+	 * 
+	 * @param id
+	 *            the num of lines
 	 */
 	public void playSound(int id) {
-		Clip sound = gameSounds.get(id);
-		if (sound != null) {
-			sound.stop();
-			sound.setFramePosition(0);
-			sound.start();
+		if (id < gameSounds.size()) {
+			Clip sound = gameSounds.get(id);
+			if (sound != null && !globalMute) {
+				sound.stop();
+				sound.setFramePosition(0);
+				sound.start();
+			}
 		}
 	}
 
 	/**
 	 * Play background sound.
-	 *
-	 * @param volume the volume
+	 * 
+	 * @param volume
+	 *            the volume
 	 */
 	public void playBackgroundSound(float volume) {
-		Clip sound = gameSounds.get(BACKGROUND);
-		if (sound != null) {
-			FloatControl gainControl = (FloatControl) sound
-					.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(volume);
-			sound.start();
-			sound.loop(42);
+		if (BACKGROUND < gameSounds.size()) {
+			Clip sound = gameSounds.get(BACKGROUND);
+			if (sound != null && !globalMute) {
+				FloatControl gainControl = (FloatControl) sound
+						.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(volume);
+				sound.start();
+				sound.loop(42);
+			}
 		}
 	}
 
@@ -265,9 +322,11 @@ public class MusicPlayer {
 	 * Stop bg sound.
 	 */
 	public void stopBackgroundSound() {
-		Clip sound = gameSounds.get(BACKGROUND);
-		if (sound != null) {
-			sound.stop();
+		if (BACKGROUND < gameSounds.size()) {
+			Clip sound = gameSounds.get(BACKGROUND);
+			if (sound != null) {
+				sound.stop();
+			}
 		}
 	}
 
@@ -276,6 +335,10 @@ public class MusicPlayer {
 	 * nulled.
 	 */
 	public void terminate() {
+		Application.getInstance().removeKeyboardControl(this);
+		muteButton.dispose();
+		noMuteButton.dispose();
+
 		instance = null;
 		for (Clip c : gameSounds) {
 			try {
@@ -293,6 +356,74 @@ public class MusicPlayer {
 		files = null;
 		urls.clear();
 		urls = null;
+	}
+
+	/**
+	 * Sets the mute.
+	 * 
+	 * @param value
+	 *            the new mute
+	 */
+	private void setMute(boolean value) {
+		globalMute = value;
+		if (globalMute) {
+			stopBackgroundSound();
+			muteButton.makeVisible();
+			noMuteButton.makeInvisible();
+			Application.getInstance().removeMouseControl(noMuteButton);
+			Application.getInstance().addMouseControl(muteButton);
+		} else {
+			playBackgroundSound(-10);
+			muteButton.makeInvisible();
+			noMuteButton.makeVisible();
+			Application.getInstance().removeMouseControl(muteButton);
+			Application.getInstance().addMouseControl(noMuteButton);
+		}
+	}
+
+	/**
+	 * Toggle mute.
+	 */
+	private void toggleMute() {
+		setMute(!globalMute);
+	}
+
+	// =======================================================================
+	// Keyboard-control for sound
+	// =======================================================================
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see framework.events.KeyboardControl#keyPressed(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent event) {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * framework.events.KeyboardControl#keyReleased(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyReleased(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.VK_M) {
+			toggleMute();
+		}
+		event.consume();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see framework.events.KeyboardControl#keyTyped(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyTyped(KeyEvent event) {
+
 	}
 
 }
