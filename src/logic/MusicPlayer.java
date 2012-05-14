@@ -426,4 +426,14 @@ public class MusicPlayer implements KeyboardControl {
 
 	}
 
+	@Override
+	public void addKeyboardControl() {
+		
+	}
+
+	@Override
+	public void removeKeyboardControl() {
+		
+	}
+
 }

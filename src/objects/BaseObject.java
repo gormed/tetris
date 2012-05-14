@@ -33,7 +33,7 @@
  * File: BaseObject.java
  * Type: objects.BaseObject
  * 
- * Documentation created: 29.01.2012 - 23:07:25 by Hans
+ * Documentation created: 13.02.2012 - 12:27:10 by Hans
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package objects;
@@ -127,6 +127,14 @@ abstract public class BaseObject extends UpdateObject {
 			if (f != null)
 				f.makeInvisible();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see framework.interfaces.Clickable#isClicked()
+	 */
+	@Override
+	public boolean isClicked() {
+		return false;
 	}
 
 	/*
@@ -345,10 +353,14 @@ abstract public class BaseObject extends UpdateObject {
 			arrayY = arrayIDX.y;
 
 			this.outer = new Square(xPos, yPos, size, outer);
-
+			this.outer.removeKeyboardControl();
+			this.outer.removeMouseControl();
 			this.inner = new Square(xPos + border, yPos + border, size
 					- (2 * border), inner);
+			this.inner.removeKeyboardControl();
+			this.inner.removeMouseControl();
 			makeVisible();
+			removeKeyboardControl();
 			//Application.getInstance().removeUpdateObject(this);
 		}
 

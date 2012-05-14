@@ -478,6 +478,16 @@ public class GameStepper implements TimedControl {
 			public void keyTyped(KeyEvent event) {
 
 			}
+
+			@Override
+			public void addKeyboardControl() {
+				
+			}
+
+			@Override
+			public void removeKeyboardControl() {
+				
+			}
 		};
 
 		Application.getInstance().addKeyboardControl(gameOverKeyControl);
@@ -538,6 +548,16 @@ public class GameStepper implements TimedControl {
 			public void keyTyped(KeyEvent event) {
 
 			}
+
+			@Override
+			public void addKeyboardControl() {
+				
+			}
+
+			@Override
+			public void removeKeyboardControl() {
+				
+			}
 		};
 		Application.getInstance().addKeyboardControl(startGameKeyControl);
 	}
@@ -575,6 +595,16 @@ public class GameStepper implements TimedControl {
 			@Override
 			public void keyTyped(KeyEvent event) {
 
+			}
+
+			@Override
+			public void addKeyboardControl() {
+				
+			}
+
+			@Override
+			public void removeKeyboardControl() {
+				
 			}
 		};
 		
@@ -864,6 +894,16 @@ public class GameStepper implements TimedControl {
 		@Override
 		public long getPeriod() {
 			return 50;
+		}
+
+		@Override
+		public void addKeyboardControl() {
+			
+		}
+
+		@Override
+		public void removeKeyboardControl() {
+			
 		}
 
 	}
